@@ -21,14 +21,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.coollib.domain.model.Book
+import com.example.coollib.ui.model.BookItemUiModel
 
 @Composable
 fun BookCard(
-    book: Book,
-    onBookClick: (book: Book) -> Unit
+    book: BookItemUiModel,
+    onBookClick: (Int) -> Unit
 ) {
     ElevatedCard(
-        onClick = { onBookClick(book) }
+        onClick = { onBookClick(book.id) }
     ) {
         Column(
             modifier = Modifier.padding(10.dp),

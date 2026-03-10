@@ -34,13 +34,14 @@ import androidx.compose.ui.unit.dp
 import com.example.coollib.domain.model.Book
 import com.example.coollib.ui.components.BookCard
 import com.example.coollib.ui.components.BookRow
+import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.theme.CoolLibTheme
 
 @Composable
 fun BookScreen(
     books: List<Book>,
-    onBookClick: (book: Book) -> Unit,
+    onBookClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var listMode by remember { mutableStateOf(true) }
@@ -83,7 +84,7 @@ fun BookScreen(
 @Composable
 fun BookGrid(
     books: List<Book>,
-    onBookClick: (Book) -> Unit
+    onBookClick: (Int) -> Unit
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -92,7 +93,7 @@ fun BookGrid(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(books) { book ->
-            BookCard(book, onBookClick)
+            BookCard(book.toUiModel(), onBookClick)
         }
     }
 }
@@ -100,14 +101,17 @@ fun BookGrid(
 @Composable
 fun BookList(
     books: List<Book>,
-    onBookClick: (Book) -> Unit
+    onBookClick: (Int) -> Unit
 ) {
     LazyColumn(
         contentPadding = PaddingValues(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(books) { book ->
-            BookRow(book, onBookClick)
+            BookRow(
+                book = book.toUiModel(),
+                onBookClick = onBookClick
+            )
         }
     }
 }

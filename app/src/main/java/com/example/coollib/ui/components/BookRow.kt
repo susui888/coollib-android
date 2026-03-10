@@ -18,16 +18,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.coollib.domain.model.Book
+import com.example.coollib.ui.mapper.toUiModel
+import com.example.coollib.ui.model.BookItemUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.theme.CoolLibTheme
 
 @Composable
 fun BookRow(
-    book: Book,
-    onBookClick: (Book) -> Unit
+    book: BookItemUiModel,
+    onBookClick: (Int) -> Unit
 ) {
     ElevatedCard(
-        onClick = { onBookClick(book) }
+        onClick = { onBookClick(book.id) }
     ) {
 
         Row(
@@ -72,7 +74,7 @@ fun BookRow(
 fun BookRowPreview() {
     CoolLibTheme {
         BookRow(
-            book = MockBooks.list.first(),
+            book = MockBooks.list.first().toUiModel(),
             onBookClick = {}
         )
     }

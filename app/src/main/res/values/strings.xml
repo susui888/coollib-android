@@ -14,6 +14,7 @@
     <string name="home_label">Home</string>
     <string name="books_label">Books</string>
     <string name="cart_label">Cart</string>
+    <string name="wishlist_label">Favourites</string>
     <string name="search_label">Search</string>
 
     <!-- ================= Home Screen ================= -->
@@ -63,5 +64,8 @@
     <string name="tap_to_retry">Tap to retry</string>
     <string name="network_connection_failed">Network connection failed. Please check your settings.</string>
     <string name="unknown_error">Unknown error: %1$s</string>
-
+    <string name="cart_is_empty">Cart is empty</string>
+    <string name="empty_msg">Books you add will appear here.</string>
+    <string name="no_saved_books">No saved books</string>
+    <string name="confirm_borrow_books">CONFIRM BORROW (%1$d BOOKS)</string>
 </resources>
