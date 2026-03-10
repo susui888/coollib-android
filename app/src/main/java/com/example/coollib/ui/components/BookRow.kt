@@ -41,7 +41,8 @@ fun BookRow(
                 modifier = Modifier
                     .size(60.dp, 90.dp)
                     .border(1.dp, Color.LightGray),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = paintBookCover(book.title,book.author,)
             )
 
             Column(

@@ -44,7 +44,8 @@ fun BookCard(
                     .shadow(8.dp)
                     .border(1.dp, Color.LightGray)
                     .clip(RectangleShape),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = paintBookCover(book.title,book.author,)
             )
 
             Text(
