@@ -15,11 +15,13 @@
     <string name="books_label">Books</string>
     <string name="cart_label">Cart</string>
     <string name="wishlist_label">Favourites</string>
+    <string name="statistics_label">Statistics</string>
     <string name="search_label">Search</string>
 
     <!-- ================= Home Screen ================= -->
-    <string name="recently_viewed">Recently Viewed:</string>
-    <string name="explore_categories">Explore Categories:</string>
+    <string name="recently_viewed">Recently Viewed</string>
+    <string name="explore_categories">Explore Categories</string>
+    <string name="new_arrival">New Arrival</string>
 
     <!-- ================= Book ================= -->
     <string name="label_all_books">All Books</string>
