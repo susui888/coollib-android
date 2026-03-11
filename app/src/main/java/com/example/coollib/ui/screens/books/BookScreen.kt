@@ -45,10 +45,11 @@ import com.example.coollib.ui.theme.CoolLibTheme
 @Composable
 fun BookScreen(
     viewModel: BookViewModel = hiltViewModel(),
+    query: SearchQuery,
     onBookClick: (Int) -> Unit
 ){
     LaunchedEffect(Unit) {
-        viewModel.searchBooks(SearchQuery())
+        viewModel.searchBooks(query)
     }
 
     val books by viewModel.books.collectAsState()
@@ -78,7 +79,7 @@ fun BookScreenContent(
         ) {
 
             Text(
-                text = "Books",
+                text = "${books.size} Books Found",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )

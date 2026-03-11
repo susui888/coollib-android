@@ -2,22 +2,23 @@ package com.example.coollib.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockCart
 import com.example.coollib.ui.previewSupport.MockCategory
 import com.example.coollib.ui.previewSupport.MockWishlist
 import com.example.coollib.ui.screens.books.BookDetailScreen
-import com.example.coollib.ui.screens.home.HomeScreen
 import com.example.coollib.ui.screens.books.BookScreen
-import com.example.coollib.ui.screens.books.BookViewModel
+import com.example.coollib.ui.screens.books.PreviewSearchWithHistory
 import com.example.coollib.ui.screens.books.SearchScreen
 import com.example.coollib.ui.screens.checkout.CartScreen
+import com.example.coollib.ui.screens.home.HomeScreen
 import com.example.coollib.ui.screens.statistics.StatisticsScreen
 
 
@@ -61,13 +62,6 @@ fun AppNavGraph(
                 onBookClick = {})
         }
 
-        composable(Screen.Books.route) {
-            BookScreen(
-                onBookClick = { id ->
-                    navController.navigate(Screen.BookDetail.createRoute(id))
-                }
-            )
-        }
 
         composable(Screen.Cart.route) {
             CartScreen(
@@ -91,22 +85,14 @@ fun AppNavGraph(
                 onBack = {},
                 onClearAll = {},
                 onDeleteItem = {},
-                onSearch = {}
+                onSearch = { searchTerm ->
+                    navController.navigate(Screen.Books.createRoute(SearchQuery(searchTerm = searchTerm)))
+                }
             )
         }
 
-        composable(
-            route = Screen.BookDetail.route,
-            arguments = listOf(navArgument("id") { type = NavType.IntType })
-        ) { backStackEntry ->
-            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+        booksRoute(navController)
 
-            BookDetailScreen(
-                bookId = id,
-                onAuthorClick = {},
-                onPublisherClick = {},
-                onYearClick = {},
-            )
-        }
+        bookDetailRoute(navController)
     }
 }

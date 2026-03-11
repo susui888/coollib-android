@@ -1,4 +1,4 @@
-package com.example.coollib.ui.navigation
+package com.example.coollib.ui.components
 
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.Image
