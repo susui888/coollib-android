@@ -13,7 +13,7 @@ object MockWishlist {
             author = "Robert Jordan",
             publisher = "Tor Books",
             year = 2000,
-            coverUrl = "${APIConfig.BASEURL}/img/cover/9780812575583.webp"
+            coverUrl = "${APIConfig.SERVER}/img/cover/9780812575583.webp"
         ),
 
         Wishlist(
@@ -24,7 +24,7 @@ object MockWishlist {
             publisher = "Tor Books",
             year = 2013,
 
-            coverUrl = "${APIConfig.BASEURL}/img/cover/9780765325969.webp"
+            coverUrl = "${APIConfig.SERVER}/img/cover/9780765325969.webp"
         )
     )
 }

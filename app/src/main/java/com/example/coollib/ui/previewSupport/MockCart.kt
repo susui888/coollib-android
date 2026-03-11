@@ -1,7 +1,6 @@
 package com.example.coollib.ui.previewSupport
 
 import com.example.coollib.data.remote.APIConfig
-import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.Cart
 
 object MockCart {
@@ -15,7 +14,7 @@ object MockCart {
             author = "Miguel de Cervantes",
             publisher = "Penguin Classics",
             year = 1605,
-            coverUrl = "${APIConfig.BASEURL}/img/cover/9780142437230.webp"
+            coverUrl = "${APIConfig.SERVER}/img/cover/9780142437230.webp"
         ),
 
         Cart(
@@ -25,7 +24,7 @@ object MockCart {
             author = "Stephen Hawking",
             publisher = "Bantam",
             year = 1988,
-            coverUrl = "${APIConfig.BASEURL}/img/cover/9780553380163.webp"
+            coverUrl = "${APIConfig.SERVER}/img/cover/9780553380163.webp"
         ),
 
         Cart(
@@ -35,7 +34,7 @@ object MockCart {
             author = "Robert C. Martin",
             publisher = "Prentice Hall",
             year = 2008,
-            coverUrl = "${APIConfig.BASEURL}/img/cover/9780132350884.webp"
+            coverUrl = "${APIConfig.SERVER}/img/cover/9780132350884.webp"
         ),
 
         Cart(
@@ -45,7 +44,7 @@ object MockCart {
             author = "Robert Jordan",
             publisher = "Tor Books",
             year = 1992,
-           coverUrl = "${APIConfig.BASEURL}/img/cover/9780812513738.webp"
+           coverUrl = "${APIConfig.SERVER}/img/cover/9780812513738.webp"
         ),
     )
 }

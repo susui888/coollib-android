@@ -24,7 +24,9 @@ import com.example.coollib.ui.navigation.BottomBar
 import com.example.coollib.ui.navigation.TopBar
 import com.example.coollib.ui.screens.books.BookScreen
 import com.example.coollib.ui.theme.CoolLibTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

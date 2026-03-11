@@ -2,6 +2,7 @@ package com.example.coollib.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.*
 import com.example.coollib.ui.mapper.toUiModel
@@ -11,6 +12,7 @@ import com.example.coollib.ui.previewSupport.MockCategory
 import com.example.coollib.ui.previewSupport.MockWishlist
 import com.example.coollib.ui.screens.home.HomeScreen
 import com.example.coollib.ui.screens.books.BookScreen
+import com.example.coollib.ui.screens.books.BookViewModel
 import com.example.coollib.ui.screens.books.SearchScreen
 import com.example.coollib.ui.screens.checkout.CartScreen
 import com.example.coollib.ui.screens.statistics.StatisticsScreen
@@ -57,9 +59,7 @@ fun AppNavGraph(
         }
 
         composable(Screen.Books.route) {
-            BookScreen(
-                books = MockBooks.list,
-                onBookClick = {})
+            BookScreen()
         }
 
         composable(Screen.Cart.route) {
