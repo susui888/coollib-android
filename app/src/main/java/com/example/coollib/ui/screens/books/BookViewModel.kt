@@ -19,11 +19,20 @@ class BookViewModel @Inject constructor(
 
     private val _books = MutableStateFlow<List<Book>>(emptyList())
     val books: StateFlow<List<Book>> = _books.asStateFlow()
+    private val _selectedBook = MutableStateFlow<Book?>(null)
+    val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
+
 
     fun searchBooks(query: SearchQuery) {
         viewModelScope.launch {
             val result = bookUseCase.searchBooks(query)
             _books.value = result
+        }
+    }
+
+    fun selectBook(id: Int) {
+        viewModelScope.launch {
+            _selectedBook.value = bookUseCase.getBookById(id)
         }
     }
 }

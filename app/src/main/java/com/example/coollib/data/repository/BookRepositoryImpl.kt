@@ -6,14 +6,16 @@ import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.domain.repository.BookRepository
 import jakarta.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class BookRepositoryImpl @Inject constructor(
         private val api: BookApi
     ) : BookRepository {
 
-        override suspend fun searchBooks(query: SearchQuery): List<Book> {
-
+    override suspend fun searchBooks(query: SearchQuery): List<Book> =
+        withContext(Dispatchers.IO) {
             val response = api.searchBooks(
                 category = query.category,
                 author = query.author,
@@ -23,9 +25,21 @@ class BookRepositoryImpl @Inject constructor(
             )
 
             if (!response.isSuccessful) {
-                throw Exception("Http error ${response.code()}")
+                throw HttpException(response)
             }
 
-            return response.body()?.map { it.toDomain() }.orEmpty()
-        }
+            response.body()?.map { it.toDomain() }.orEmpty()
     }
+
+
+    override suspend fun getBookById(id: Int): Book? =
+        withContext(Dispatchers.IO) {
+            val response = api.getBookById(id)
+
+            if (!response.isSuccessful) {
+                throw HttpException(response)
+            }
+
+            response.body()?.toDomain()
+        }
+}

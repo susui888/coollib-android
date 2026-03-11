@@ -9,8 +9,11 @@ import javax.inject.Inject
 class BookUseCase @Inject constructor(
     private val repository: BookRepository
 ) {
-
     suspend fun searchBooks(query: SearchQuery): List<Book> {
         return repository.searchBooks(query).shuffled()
+    }
+
+    suspend fun getBookById(id: Int): Book?{
+        return repository.getBookById(id)
     }
 }

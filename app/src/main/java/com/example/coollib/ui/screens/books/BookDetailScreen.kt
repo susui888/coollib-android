@@ -26,6 +26,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,21 +42,49 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.theme.CoolLibTheme
-
 @Composable
 fun BookDetailScreen(
+    bookId: Int,
+    viewModel: BookViewModel = hiltViewModel(),
+    onAuthorClick: (String) -> Unit,
+    onPublisherClick: (String) -> Unit,
+    onYearClick: (Int) -> Unit,
+) {
+    val selectedBook by viewModel.selectedBook.collectAsState()
+
+    LaunchedEffect(bookId) {
+        viewModel.selectBook(bookId)
+    }
+
+    selectedBook?.let { book ->
+        BookDetailScreenContent(
+            book = book,
+            isInCart = true,
+            onToggleCart = {},
+            onToggleFavorite = {},
+            onAuthorClick = onAuthorClick,
+            onPublisherClick = onPublisherClick,
+            onYearClick = onYearClick
+        )
+    }
+}
+
+@Composable
+fun BookDetailScreenContent(
     book: Book,
     isInCart: Boolean,
     onToggleCart: () -> Unit,
     onToggleFavorite: () -> Unit,
-    onAuthorClick: (Book) -> Unit,
-    onPublisherClick: (Book) -> Unit,
+    onAuthorClick: (String) -> Unit,
+    onPublisherClick: (String) -> Unit,
+    onYearClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState()
 ) {
@@ -78,7 +109,7 @@ fun BookDetailScreen(
                     .border(1.dp, Color.LightGray)
                     .clip(RectangleShape),
                 contentScale = ContentScale.FillBounds,
-                placeholder = paintBookCover(book.title, book.author,)
+                placeholder = paintBookCover(book.title, book.author)
             )
 
             Text(
@@ -94,7 +125,7 @@ fun BookDetailScreen(
                 text = "${stringResource(R.string.label_author)}: ${book.author}",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onAuthorClick(book) }
+                    .clickable { onAuthorClick(book.author) }
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
@@ -105,7 +136,7 @@ fun BookDetailScreen(
                 text = "${stringResource(R.string.label_publisher)}: ${book.publisher}",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onPublisherClick(book) }
+                    .clickable { onPublisherClick(book.publisher) }
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
@@ -116,7 +147,7 @@ fun BookDetailScreen(
                 text = stringResource(R.string.label_year_format, book.year),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onPublisherClick(book) }
+                    .clickable { onYearClick(book.year) }
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary
@@ -280,14 +311,15 @@ fun FavoriteButton(
 fun BookDetailScreenPreview() {
     CoolLibTheme {
         val context = LocalContext.current
-        BookDetailScreen(
+        BookDetailScreenContent(
             book = MockBooks.list.first(),
             isInCart = true,
             onToggleCart = {},
             onToggleFavorite = {},
-            onAuthorClick = { book ->
-                Toast.makeText(context, "${book.author}", Toast.LENGTH_LONG).show() },
-            onPublisherClick = {}
+            onAuthorClick = { author ->
+                Toast.makeText(context, author, Toast.LENGTH_LONG).show() },
+            onPublisherClick = {},
+            onYearClick = {}
         )
     }
 }
@@ -296,13 +328,14 @@ fun BookDetailScreenPreview() {
 @Composable
 fun BookDetailScreenPreview_NoInCart() {
     CoolLibTheme {
-        BookDetailScreen(
+        BookDetailScreenContent(
             book = MockBooks.list.first(),
             isInCart = false,
             onToggleCart = {},
             onToggleFavorite = {},
             onAuthorClick = {},
-            onPublisherClick = {}
+            onPublisherClick = {},
+            onYearClick = {}
         )
     }
 }

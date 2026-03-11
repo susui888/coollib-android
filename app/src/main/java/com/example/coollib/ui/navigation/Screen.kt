@@ -24,6 +24,10 @@ sealed class Screen(
     data object Statistics: Screen("statistics",R.string.statistics_label,Icons.Rounded.Analytics)
     data object Search: Screen("search", R.string.search_label,Icons.Rounded.Search)
 
+    //Nested screen
+    data object BookDetail: Screen("bookDetail/{id}", 0, Icons.Rounded.Book){
+        fun createRoute(id: Int) = "bookDetail/$id"
+    }
 }
 
 val screens = listOf(Screen.Home, Screen.Books, Screen.Cart, Screen.Statistics, Screen.Search)

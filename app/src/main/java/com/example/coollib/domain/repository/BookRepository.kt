@@ -5,8 +5,6 @@ import com.example.coollib.domain.model.SearchQuery
 
 interface BookRepository {
 
-    suspend fun searchBooks(
-        query: SearchQuery
-    ): List<Book>
-
+    suspend fun searchBooks(query: SearchQuery): List<Book>
+    suspend fun getBookById(id: Int): Book?
 }

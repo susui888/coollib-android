@@ -7,6 +7,8 @@ import retrofit2.http.Query
 
 interface BookApi {
 
+    @GET("books/{id}")
+    suspend fun getBookById(@Path("id") id: Int): Response<BookDto>
     @GET("books/search")
     suspend fun searchBooks(
         @Query("category") category: Int? = null,

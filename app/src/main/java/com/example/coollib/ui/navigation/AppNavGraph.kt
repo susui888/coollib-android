@@ -4,12 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.*
+import androidx.navigation.navArgument
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockCart
 import com.example.coollib.ui.previewSupport.MockCategory
 import com.example.coollib.ui.previewSupport.MockWishlist
+import com.example.coollib.ui.screens.books.BookDetailScreen
 import com.example.coollib.ui.screens.home.HomeScreen
 import com.example.coollib.ui.screens.books.BookScreen
 import com.example.coollib.ui.screens.books.BookViewModel
@@ -59,7 +62,11 @@ fun AppNavGraph(
         }
 
         composable(Screen.Books.route) {
-            BookScreen()
+            BookScreen(
+                onBookClick = { id ->
+                    navController.navigate(Screen.BookDetail.createRoute(id))
+                }
+            )
         }
 
         composable(Screen.Cart.route) {
@@ -85,6 +92,20 @@ fun AppNavGraph(
                 onClearAll = {},
                 onDeleteItem = {},
                 onSearch = {}
+            )
+        }
+
+        composable(
+            route = Screen.BookDetail.route,
+            arguments = listOf(navArgument("id") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("id") ?: return@composable
+
+            BookDetailScreen(
+                bookId = id,
+                onAuthorClick = {},
+                onPublisherClick = {},
+                onYearClick = {},
             )
         }
     }
