@@ -48,16 +48,19 @@ import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.previewSupport.MockBooks
+import com.example.coollib.ui.screens.checkout.CartViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
 @Composable
 fun BookDetailScreen(
     bookId: Int,
     viewModel: BookViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
     onAuthorClick: (String) -> Unit,
     onPublisherClick: (String) -> Unit,
     onYearClick: (Int) -> Unit,
 ) {
     val selectedBook by viewModel.selectedBook.collectAsState()
+    val isInCart by cartViewModel.isBookInCart(bookId).collectAsState(initial = false)
 
     LaunchedEffect(bookId) {
         viewModel.selectBook(bookId)
@@ -66,8 +69,10 @@ fun BookDetailScreen(
     selectedBook?.let { book ->
         BookDetailScreenContent(
             book = book,
-            isInCart = true,
-            onToggleCart = {},
+            isInCart = isInCart,
+            onToggleCart = {
+                cartViewModel.toggleCart(bookId, isInCart)
+            },
             onToggleFavorite = {},
             onAuthorClick = onAuthorClick,
             onPublisherClick = onPublisherClick,

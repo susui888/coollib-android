@@ -1,7 +1,12 @@
 package com.example.coollib.ui.components
 
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.*
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -10,10 +15,14 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.coollib.ui.navigation.Screen
 import com.example.coollib.ui.navigation.screens
 
 @Composable
-fun BottomBar(navController: NavController) {
+fun BottomBar(
+    navController: NavController,
+    cartCount: Int
+) {
 
     val navBackStackEntry = navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry.value?.destination
@@ -25,11 +34,19 @@ fun BottomBar(navController: NavController) {
             NavigationBarItem(
 
                 icon = {
-                    Icon(
-                        imageVector = screen.icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(32.dp)
-                    )
+                    BadgedBox(
+                        badge = {
+                            if (cartCount != 0 && screen.route == Screen.Cart.route) {
+                                Badge { Text(cartCount.toString()) }
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = screen.icon,
+                            contentDescription = null,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                 },
 
                 label = {

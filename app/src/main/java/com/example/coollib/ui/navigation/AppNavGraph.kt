@@ -66,13 +66,9 @@ fun AppNavGraph(
 
         composable(Screen.Cart.route) {
             CartScreen(
-                cartItems = MockCart.list,
-                wishlistItems = MockWishlist.list,
-                isBorrowing = false,
-                onBookClick = {},
-                onRemoveCartItem = {},
-                onRemoveWishlistItem = {},
-                onBorrow = {}
+                onBookClick = { bookId ->
+                    navController.navigate(Screen.BookDetail.createRoute(bookId))
+                }
             )
         }
 

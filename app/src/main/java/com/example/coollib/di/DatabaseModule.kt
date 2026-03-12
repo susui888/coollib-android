@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.coollib.data.local.AppDatabase
 import com.example.coollib.data.local.BookDao
+import com.example.coollib.data.local.CartDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +26,9 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "coolLib_database"
-        ).build()
+        )
+            .fallbackToDestructiveMigration(dropAllTables = true)
+            .build()
     }
 
     @Provides
@@ -33,4 +36,8 @@ object DatabaseModule {
         database: AppDatabase
     ): BookDao = database.bookDao()
 
+    @Provides
+    fun provideCartDao(
+        database: AppDatabase
+    ): CartDao = database.cartDao()
 }

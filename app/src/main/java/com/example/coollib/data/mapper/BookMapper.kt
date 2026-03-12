@@ -1,6 +1,7 @@
 package com.example.coollib.data.mapper
 
 import com.example.coollib.data.local.BookEntity
+import com.example.coollib.data.local.CartEntity
 import com.example.coollib.data.remote.APIConfig
 import com.example.coollib.data.remote.BookDto
 import com.example.coollib.domain.model.Book
@@ -38,4 +39,14 @@ fun BookEntity.toDomain() = Book(
     this.available,
     this.description,
     coverUrl = "${APIConfig.SERVER}/img/cover/$isbn.webp",
+)
+
+fun Book.toCartEntity() = CartEntity(
+    id = this.id,
+    isbn = this.isbn,
+    title = this.title,
+    author = this.author,
+    publisher = this.publisher,
+    year = this.year,
+    addedAt = System.currentTimeMillis()
 )
