@@ -12,4 +12,6 @@ interface BookRepository {
     suspend fun getBookById(id: Int): Book?
     suspend fun getCategory(): List<Category>
     fun getBooks(limit: Int): Flow<List<Book>>
+
+    suspend fun getNewestBooks(): List<Book>
 }

@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.coollib.data.local.AppDatabase
 import com.example.coollib.data.local.BookDao
 import com.example.coollib.data.local.CartDao
+import com.example.coollib.data.local.WishlistDao
+import com.example.coollib.domain.model.Wishlist
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -40,4 +42,9 @@ object DatabaseModule {
     fun provideCartDao(
         database: AppDatabase
     ): CartDao = database.cartDao()
+
+    @Provides
+    fun provideWishlistDao(
+        database: AppDatabase
+    ): WishlistDao = database.wishlistDao()
 }

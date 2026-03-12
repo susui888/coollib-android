@@ -74,4 +74,16 @@ class BookRepositoryImpl @Inject constructor(
     override fun getBooks(limit: Int): Flow<List<Book>> =
         bookDao.getBooks(limit)
             .map { list -> list.map { it.toDomain() } }
+
+    override suspend fun getNewestBooks(): List<Book> =
+        withContext(Dispatchers.IO) {
+            val response = api.getNewestBooks()
+
+            if (!response.isSuccessful) {
+                throw HttpException(response)
+            }
+
+            response.body()?.map { it.toDomain() }.orEmpty()
+        }
+
 }

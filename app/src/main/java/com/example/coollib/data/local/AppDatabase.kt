@@ -7,11 +7,13 @@ import androidx.room.RoomDatabase
     entities = [
         BookEntity::class,
         CartEntity::class,
+        WishlistEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookDao(): BookDao
     abstract fun cartDao(): CartDao
+    abstract fun wishlistDao(): WishlistDao
 }

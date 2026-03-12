@@ -21,13 +21,18 @@ class HomeViewModel @Inject constructor(
     private val _category = MutableStateFlow<List<Category>>(emptyList())
     val category: StateFlow<List<Category>> = _category.asStateFlow()
 
+    private val _newestBooks = MutableStateFlow<List<Book>>(emptyList())
+    val newestBooks: StateFlow<List<Book>> = _newestBooks.asStateFlow()
+
+
     init {
-        loadCategory()
+        load()
     }
 
-    fun loadCategory(){
+    fun load(){
         viewModelScope.launch {
             _category.value = bookUseCase.getCategory()
+            _newestBooks.value = bookUseCase.getNewestBooks()
         }
     }
 

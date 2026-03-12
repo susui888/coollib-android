@@ -1,7 +1,10 @@
 package com.example.coollib.ui.navigation
 
-import androidx.navigation.*
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.ui.screens.books.BookScreen
 

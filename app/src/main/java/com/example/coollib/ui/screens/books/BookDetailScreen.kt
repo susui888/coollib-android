@@ -23,11 +23,11 @@ import androidx.compose.material.icons.filled.RemoveShoppingCart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,37 +43,46 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.screens.checkout.CartViewModel
+import com.example.coollib.ui.screens.checkout.WishlistViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
+
 @Composable
 fun BookDetailScreen(
     bookId: Int,
-    viewModel: BookViewModel = hiltViewModel(),
+    bookViewModel: BookViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel(),
+    wishlistViewModel: WishlistViewModel = hiltViewModel(),
     onAuthorClick: (String) -> Unit,
     onPublisherClick: (String) -> Unit,
     onYearClick: (Int) -> Unit,
 ) {
-    val selectedBook by viewModel.selectedBook.collectAsState()
-    val isInCart by cartViewModel.isBookInCart(bookId).collectAsState(initial = false)
+    val selectedBook by bookViewModel.selectedBook.collectAsStateWithLifecycle()
+    val isInCart by cartViewModel.isBookInCart(bookId).collectAsStateWithLifecycle(initialValue = false)
+    val isFavorite by wishlistViewModel.isBookInWishlist(bookId).collectAsStateWithLifecycle(initialValue = false)
+    val isInWishlist by wishlistViewModel.isBookInWishlist(bookId).collectAsStateWithLifecycle(initialValue = false)
 
     LaunchedEffect(bookId) {
-        viewModel.selectBook(bookId)
+        bookViewModel.selectBook(bookId)
     }
 
     selectedBook?.let { book ->
         BookDetailScreenContent(
             book = book,
             isInCart = isInCart,
+            isFavorite = isFavorite,
             onToggleCart = {
                 cartViewModel.toggleCart(bookId, isInCart)
             },
-            onToggleFavorite = {},
+            onToggleFavorite = {
+                wishlistViewModel.toggleWishlist(bookId,isInWishlist)
+            },
             onAuthorClick = onAuthorClick,
             onPublisherClick = onPublisherClick,
             onYearClick = onYearClick
@@ -85,6 +94,7 @@ fun BookDetailScreen(
 fun BookDetailScreenContent(
     book: Book,
     isInCart: Boolean,
+    isFavorite: Boolean,
     onToggleCart: () -> Unit,
     onToggleFavorite: () -> Unit,
     onAuthorClick: (String) -> Unit,
@@ -204,7 +214,7 @@ fun BookDetailScreenContent(
             Spacer(Modifier.size(12.dp))
 
             FavoriteButton(
-                isFavorite = false,
+                isFavorite = isFavorite,
                 onClick = onToggleFavorite,
                 modifier = Modifier
                     .weight(1f)
@@ -280,7 +290,7 @@ fun FavoriteButton(
 
     val containerColor =
         if (isFavorite)
-            MaterialTheme.colorScheme.secondaryContainer
+            MaterialTheme.colorScheme.errorContainer
         else
             MaterialTheme.colorScheme.surfaceVariant
 
@@ -300,7 +310,12 @@ fun FavoriteButton(
                     Icons.Default.Favorite
                 else
                     Icons.Default.FavoriteBorder,
-            contentDescription = null
+            contentDescription = null,
+            tint =
+                if (isFavorite)
+                    MaterialTheme.colorScheme.error
+                else
+                    LocalContentColor.current
         )
 
         Spacer(Modifier.size(8.dp))
@@ -319,6 +334,7 @@ fun BookDetailScreenPreview() {
         BookDetailScreenContent(
             book = MockBooks.list.first(),
             isInCart = true,
+            isFavorite = true,
             onToggleCart = {},
             onToggleFavorite = {},
             onAuthorClick = { author ->
@@ -336,6 +352,7 @@ fun BookDetailScreenPreview_NoInCart() {
         BookDetailScreenContent(
             book = MockBooks.list.first(),
             isInCart = false,
+            isFavorite = true,
             onToggleCart = {},
             onToggleFavorite = {},
             onAuthorClick = {},

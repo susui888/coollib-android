@@ -11,18 +11,19 @@ import javax.inject.Inject
 class BookUseCase @Inject constructor(
     private val repository: BookRepository
 ) {
-    suspend fun searchBooks(query: SearchQuery): List<Book> {
-        return repository.searchBooks(query).shuffled()
-    }
-    suspend fun getBookById(id: Int): Book?{
-        return repository.getBookById(id)
-    }
+    suspend fun searchBooks(query: SearchQuery): List<Book> =
+        repository.searchBooks(query).shuffled()
 
-    suspend fun getCategory(): List<Category>{
-        return repository.getCategory()
-    }
+    suspend fun getBookById(id: Int): Book? =
+        repository.getBookById(id)
 
-    fun getBooks(limit: Int = 12): Flow<List<Book>> {
-        return repository.getBooks(limit)
-    }
+
+    suspend fun getCategory(): List<Category> =
+        repository.getCategory()
+
+    fun getBooks(limit: Int = 12): Flow<List<Book>> =
+        repository.getBooks(limit)
+
+    suspend fun getNewestBooks(): List<Book> =
+       repository.getNewestBooks()
 }

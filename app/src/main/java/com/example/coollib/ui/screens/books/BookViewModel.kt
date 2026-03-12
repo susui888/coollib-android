@@ -3,7 +3,6 @@ package com.example.coollib.ui.screens.books
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coollib.domain.model.Book
-import com.example.coollib.domain.model.Category
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.domain.usecase.BookUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

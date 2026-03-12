@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.coollib.domain.model.Book
 import com.example.coollib.ui.model.BookItemUiModel
 
 @Composable

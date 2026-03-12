@@ -17,7 +17,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.coollib.domain.model.Book
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
 import com.example.coollib.ui.previewSupport.MockBooks

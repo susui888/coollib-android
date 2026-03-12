@@ -20,4 +20,7 @@ interface BookApi {
 
     @GET("category")
     suspend fun getCategory(): Response<List<CategoryDto>>
+
+    @GET("books/newest")
+    suspend fun getNewestBooks(): Response<List<BookDto>>
 }

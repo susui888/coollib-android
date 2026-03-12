@@ -33,7 +33,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,7 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Cart
 import com.example.coollib.domain.model.Wishlist
@@ -56,24 +55,28 @@ import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockCart
 import com.example.coollib.ui.previewSupport.MockWishlist
 import com.example.coollib.ui.theme.CoolLibTheme
+
 @Composable
 fun CartScreen(
-    viewModel: CartViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel = hiltViewModel(),
+    wishlistViewModel: WishlistViewModel = hiltViewModel(),
     onBookClick: (Int) -> Unit,
 ){
 
-    val cartItems by viewModel.cartItems.collectAsState()
-
+    val cartItems by cartViewModel.cartItems.collectAsStateWithLifecycle()
+    val wishlist by wishlistViewModel.wishlist.collectAsStateWithLifecycle()
 
     CartScreenContent(
         cartItems = cartItems,
-        wishlistItems = MockWishlist.list,
+        wishlistItems = wishlist,
         isBorrowing = false,
         onBookClick = onBookClick,
         onRemoveCartItem = { bookId ->
-            viewModel.removeFromCart(bookId)
+            cartViewModel.removeFromCart(bookId)
         },
-        onRemoveWishlistItem = {},
+        onRemoveWishlistItem = { bookId ->
+            wishlistViewModel.removeFromWishlist(bookId)
+        },
         onBorrow = {}
     )
 }

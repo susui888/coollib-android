@@ -1,7 +1,6 @@
 package com.example.coollib.data.repository
 
 import com.example.coollib.data.local.CartDao
-import com.example.coollib.data.local.CartEntity
 import com.example.coollib.data.mapper.toCartEntity
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.domain.model.Book
