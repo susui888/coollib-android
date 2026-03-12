@@ -54,10 +54,13 @@ fun AppNavGraph(
 
         composable(Screen.Home.route) {
             HomeScreen(
-                onCategoryClick = { id ->
-                    navController.navigate(Screen.Books.createRoute(SearchQuery(category = id)))
+                onCategoryClick = { categoryId ->
+                    navController.navigate(Screen.Books.createRoute(SearchQuery(category = categoryId)))
                 },
-                onBookClick = {})
+                onBookClick = { bookId ->
+                    navController.navigate(Screen.BookDetail.createRoute(bookId))
+                }
+            )
         }
 
 

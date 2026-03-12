@@ -22,8 +22,6 @@ class BookViewModel @Inject constructor(
     val books: StateFlow<List<Book>> = _books.asStateFlow()
     private val _selectedBook = MutableStateFlow<Book?>(null)
     val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
-    private val _category = MutableStateFlow<List<Category>>(emptyList())
-    val category: StateFlow<List<Category>> = _category.asStateFlow()
 
 
     fun searchBooks(query: SearchQuery) {
@@ -38,9 +36,5 @@ class BookViewModel @Inject constructor(
         }
     }
 
-    fun getCategory(){
-        viewModelScope.launch {
-            _category.value = bookUseCase.getCategory()
-        }
-    }
+
 }

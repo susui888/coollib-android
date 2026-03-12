@@ -48,19 +48,16 @@ import com.example.coollib.ui.theme.CoolLibTheme
 
 @Composable
 fun HomeScreen(
-    viewModel: BookViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = hiltViewModel(),
     onCategoryClick: (Int) -> Unit,
     onBookClick: (Int) -> Unit
 ){
-    LaunchedEffect(Unit) {
-        viewModel.getCategory()
-    }
-
     val category by viewModel.category.collectAsStateWithLifecycle()
+    val lastViewBooks by viewModel.lastViewBooks.collectAsStateWithLifecycle()
 
     HomeScreenContent(
         categoryList = category,
-        lastViewBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
+        lastViewBooks = lastViewBooks.map { it.toUiModel() },
         wishlist = MockWishlist.list.map { it.toUiModel() }.shuffled(),
         newestBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
         onCategoryClick = onCategoryClick,
