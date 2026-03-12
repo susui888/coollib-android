@@ -16,6 +16,8 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -27,16 +29,44 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.composable
 import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Category
+import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
+import com.example.coollib.ui.navigation.Screen
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockCategory
 import com.example.coollib.ui.previewSupport.MockWishlist
+import com.example.coollib.ui.screens.books.BookViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
+
+@Composable
+fun HomeScreen(
+    viewModel: BookViewModel = hiltViewModel(),
+    onCategoryClick: (Int) -> Unit,
+    onBookClick: (Int) -> Unit
+){
+    LaunchedEffect(Unit) {
+        viewModel.getCategory()
+    }
+
+    val category by viewModel.category.collectAsStateWithLifecycle()
+
+    HomeScreenContent(
+        categoryList = category,
+        lastViewBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
+        wishlist = MockWishlist.list.map { it.toUiModel() }.shuffled(),
+        newestBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
+        onCategoryClick = onCategoryClick,
+        onBookClick = onBookClick
+    )
+}
 
 data class HomeSection(
     val titleRes: Int,
@@ -44,7 +74,7 @@ data class HomeSection(
 )
 
 @Composable
-fun HomeScreen(
+fun HomeScreenContent(
     categoryList: List<Category>,
     lastViewBooks: List<BookItemUiModel>,
     wishlist: List<BookItemUiModel>,
@@ -239,7 +269,7 @@ fun BookItem(
 @Composable
 fun HomeScreenPreview() {
     CoolLibTheme() {
-        HomeScreen(
+        HomeScreenContent(
             categoryList = MockCategory.list,
             lastViewBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
             wishlist = MockWishlist.list.map { it.toUiModel() }.shuffled(),

@@ -54,11 +54,9 @@ fun AppNavGraph(
 
         composable(Screen.Home.route) {
             HomeScreen(
-                categoryList = MockCategory.list,
-                lastViewBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
-                wishlist = MockWishlist.list.map { it.toUiModel() }.shuffled(),
-                newestBooks = MockBooks.list.map { it.toUiModel() }.shuffled(),
-                onCategoryClick = {},
+                onCategoryClick = { id ->
+                    navController.navigate(Screen.Books.createRoute(SearchQuery(category = id)))
+                },
                 onBookClick = {})
         }
 

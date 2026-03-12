@@ -3,6 +3,7 @@ package com.example.coollib.data.repository
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.data.remote.BookApi
 import com.example.coollib.domain.model.Book
+import com.example.coollib.domain.model.Category
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.domain.repository.BookRepository
 import jakarta.inject.Inject
@@ -41,5 +42,16 @@ class BookRepositoryImpl @Inject constructor(
             }
 
             response.body()?.toDomain()
+        }
+
+    override suspend fun getCategory(): List<Category> =
+        withContext(Dispatchers.IO) {
+            val response = api.getCategory()
+
+            if (!response.isSuccessful) {
+                throw HttpException(response)
+            }
+
+            response.body()?.map { it.toDomain() }.orEmpty()
         }
 }

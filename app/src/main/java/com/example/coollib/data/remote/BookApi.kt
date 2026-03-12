@@ -17,4 +17,7 @@ interface BookApi {
         @Query("year") year: Int? = null,
         @Query("searchTerm") searchTerm: String? = null
     ): Response<List<BookDto>>
+
+    @GET("category")
+    suspend fun getCategory(): Response<List<CategoryDto>>
 }

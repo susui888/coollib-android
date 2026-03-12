@@ -3,6 +3,7 @@ package com.example.coollib.ui.screens.books
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coollib.domain.model.Book
+import com.example.coollib.domain.model.Category
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.domain.usecase.BookUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,18 +22,25 @@ class BookViewModel @Inject constructor(
     val books: StateFlow<List<Book>> = _books.asStateFlow()
     private val _selectedBook = MutableStateFlow<Book?>(null)
     val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
+    private val _category = MutableStateFlow<List<Category>>(emptyList())
+    val category: StateFlow<List<Category>> = _category.asStateFlow()
 
 
     fun searchBooks(query: SearchQuery) {
         viewModelScope.launch {
-            val result = bookUseCase.searchBooks(query)
-            _books.value = result
+            _books.value = bookUseCase.searchBooks(query)
         }
     }
 
     fun selectBook(id: Int) {
         viewModelScope.launch {
             _selectedBook.value = bookUseCase.getBookById(id)
+        }
+    }
+
+    fun getCategory(){
+        viewModelScope.launch {
+            _category.value = bookUseCase.getCategory()
         }
     }
 }
