@@ -38,6 +38,7 @@ import com.example.coollib.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
+    modifier: Modifier = Modifier,
     history: List<String>,
     onBack: () -> Unit,
     onClearAll: () -> Unit,
@@ -48,7 +49,7 @@ fun SearchScreen(
     var expanded by remember { mutableStateOf(true) }
 
     SearchBar(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         expanded = expanded,
         onExpandedChange = { expanded = it },
         inputField = {

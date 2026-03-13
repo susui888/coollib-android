@@ -1,5 +1,7 @@
 package com.example.coollib.ui.navigation
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -18,6 +20,7 @@ fun NavGraphBuilder.bookDetailRoute(
         val id = backStackEntry.arguments?.getInt("id") ?: return@composable
 
         BookDetailScreen(
+            modifier = Modifier.testTag("BookDetailScreen"),
             bookId = id,
             onAuthorClick = { author ->
                 navController.navigate(Screen.Books.createRoute(SearchQuery(author = author)))

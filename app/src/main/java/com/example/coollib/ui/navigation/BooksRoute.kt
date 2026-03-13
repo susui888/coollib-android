@@ -1,5 +1,7 @@
 package com.example.coollib.ui.navigation
 
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
@@ -45,6 +47,7 @@ fun NavGraphBuilder.booksRoute(
         }
 
         BookScreen(
+            modifier = Modifier.testTag("BookScreen"),
             query = query,
             onBookClick = { id ->
                 navController.navigate(Screen.BookDetail.createRoute(id))

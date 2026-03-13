@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,9 +41,11 @@ import com.example.coollib.ui.previewSupport.MockCategory
 import com.example.coollib.ui.previewSupport.MockWishlist
 import com.example.coollib.ui.screens.checkout.WishlistViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
+import kotlin.text.Typography.section
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel(),
     wishlistViewModel: WishlistViewModel = hiltViewModel(),
     onCategoryClick: (Int) -> Unit,
@@ -54,6 +57,7 @@ fun HomeScreen(
     val newestBooks by homeViewModel.newestBooks.collectAsStateWithLifecycle()
 
     HomeScreenContent(
+        modifier = modifier,
         categoryList = category,
         lastViewBooks = lastViewBooks.map { it.toUiModel() },
         wishlist = wishlist.map { it.toUiModel() },
@@ -70,13 +74,13 @@ data class HomeSection(
 
 @Composable
 fun HomeScreenContent(
+    modifier: Modifier = Modifier,
     categoryList: List<Category>,
     lastViewBooks: List<BookItemUiModel>,
     wishlist: List<BookItemUiModel>,
     newestBooks: List<BookItemUiModel>,
     onCategoryClick: (Int) -> Unit,
     onBookClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
 ) {
 
     val sections = listOf(
@@ -86,7 +90,9 @@ fun HomeScreenContent(
     )
 
     LazyColumn(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .testTag("HomeScreenContent")
+            .fillMaxWidth()
     ) {
 
         item {
@@ -106,7 +112,8 @@ fun HomeScreenContent(
 
             BookRow(
                 books = section.books,
-                onBookClick = onBookClick
+                onBookClick = onBookClick,
+                modifier = Modifier.testTag("BookRowLazyRow_${section.titleRes}")
             )
         }
     }
@@ -118,7 +125,9 @@ fun SectionTitle(
 ) {
     Text(
         text = stringResource(titleRes),
-        modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp),
+        modifier = Modifier
+            .testTag("SectionTitle_$titleRes")
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold
     )
@@ -127,10 +136,12 @@ fun SectionTitle(
 @Composable
 fun CategoryRow(
     categories: List<Category>,
-    onCategoryClick: (Int) -> Unit
+    onCategoryClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     LazyRow(
+        modifier = modifier.testTag("CategoryLazyRow"),
         contentPadding = PaddingValues(horizontal = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -153,7 +164,9 @@ fun CategoryItem(
 ) {
 
     ElevatedCard(
-        modifier = modifier.width(240.dp),
+        modifier = modifier
+            .testTag("Category_${category.id}")
+            .width(240.dp),
         onClick = { onCategoryClick(category.id) },
         shape = MaterialTheme.shapes.small
     ) {
@@ -191,12 +204,14 @@ fun CategoryItem(
 @Composable
 fun BookRow(
     books: List<BookItemUiModel>,
-    onBookClick: (Int) -> Unit
+    onBookClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
 
     LazyRow(
+        modifier = modifier.testTag("BookRowLazyRow"),
         contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp)
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
 
         items(books) { book ->
@@ -217,7 +232,9 @@ fun BookItem(
 ) {
 
     ElevatedCard(
-        modifier = modifier.width(140.dp),
+        modifier = modifier
+            .testTag("Book_${book.id}")
+            .width(140.dp),
         onClick = { onBookClick(book.id) },
         shape = MaterialTheme.shapes.small
     ) {

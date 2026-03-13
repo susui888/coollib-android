@@ -25,10 +25,12 @@ import com.example.coollib.ui.theme.CoolLibTheme
 @Composable
 fun BookRow(
     book: BookItemUiModel,
-    onBookClick: (Int) -> Unit
+    onBookClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     ElevatedCard(
-        onClick = { onBookClick(book.id) }
+        onClick = { onBookClick(book.id) },
+        modifier = modifier
     ) {
 
         Row(
@@ -43,7 +45,7 @@ fun BookRow(
                     .size(60.dp, 90.dp)
                     .border(1.dp, Color.LightGray),
                 contentScale = ContentScale.Crop,
-                placeholder = paintBookCover(book.title,book.author,)
+                placeholder = paintBookCover(book.title,book.author)
             )
 
             Column(

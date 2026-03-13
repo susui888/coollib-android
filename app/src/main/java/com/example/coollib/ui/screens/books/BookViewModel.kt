@@ -23,17 +23,13 @@ class BookViewModel @Inject constructor(
     val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
 
 
-    fun searchBooks(query: SearchQuery) {
+    fun searchBooks(query: SearchQuery) =
         viewModelScope.launch {
             _books.value = bookUseCase.searchBooks(query)
-        }
     }
 
-    fun selectBook(id: Int) {
+    fun selectBook(id: Int) =
         viewModelScope.launch {
             _selectedBook.value = bookUseCase.getBookById(id)
         }
-    }
-
-
 }

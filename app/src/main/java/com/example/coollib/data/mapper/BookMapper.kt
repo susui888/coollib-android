@@ -61,3 +61,25 @@ fun Book.toWishlistEntity() = WishlistEntity(
     year = this.year,
     addedAt = System.currentTimeMillis()
 )
+
+fun Book.toEntity() = BookEntity(
+    this.id,
+    this.isbn,
+    this.title,
+    this.author,
+    this.publisher,
+    this.year,
+    this.available,
+    this.description
+)
+
+fun BookEntity.toDto() = BookDto(
+    this.id,
+    this.isbn,
+    this.title,
+    this.author,
+    this.publisher,
+    this.year,
+    this.available,
+    this.description,
+)

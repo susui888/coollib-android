@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,6 +43,7 @@ import com.example.coollib.ui.theme.CoolLibTheme
 
 @Composable
 fun BookScreen(
+    modifier: Modifier = Modifier,
     viewModel: BookViewModel = hiltViewModel(),
     query: SearchQuery,
     onBookClick: (Int) -> Unit
@@ -53,6 +55,7 @@ fun BookScreen(
     val books by viewModel.books.collectAsStateWithLifecycle()
 
     BookScreenContent(
+        modifier = modifier,
         books = books,
         onBookClick = onBookClick
     )
@@ -77,12 +80,14 @@ fun BookScreenContent(
         ) {
 
             Text(
+                modifier = Modifier.testTag("BookCount"),
                 text = "${books.size} Books Found",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
 
             IconButton(
+                modifier = Modifier.testTag("ToggleView"),
                 onClick = { listMode = !listMode }
             ) {
                 Icon(
@@ -107,13 +112,18 @@ fun BookGrid(
     onBookClick: (Int) -> Unit
 ) {
     LazyVerticalGrid(
+        modifier = Modifier.testTag("BookGrid"),
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(12.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         items(books) { book ->
-            BookCard(book.toUiModel(), onBookClick)
+            BookCard(
+                book = book.toUiModel(),
+                onBookClick = onBookClick,
+                modifier = Modifier.testTag("Book_${book.id}")
+            )
         }
     }
 }
@@ -124,13 +134,15 @@ fun BookList(
     onBookClick: (Int) -> Unit
 ) {
     LazyColumn(
+        modifier = Modifier.testTag("BookList"),
         contentPadding = PaddingValues(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(books) { book ->
             BookRow(
                 book = book.toUiModel(),
-                onBookClick = onBookClick
+                onBookClick = onBookClick,
+                modifier = Modifier.testTag("Book_${book.id}")
             )
         }
     }

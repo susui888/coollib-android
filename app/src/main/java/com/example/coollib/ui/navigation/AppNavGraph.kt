@@ -2,6 +2,7 @@ package com.example.coollib.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -44,6 +45,7 @@ fun AppNavGraph(
 
         composable(Screen.Home.route) {
             HomeScreen(
+                modifier = Modifier.testTag("HomeScreen"),
                 onCategoryClick = { categoryId ->
                     navController.navigate(Screen.Books.createRoute(SearchQuery(category = categoryId)))
                 },
@@ -56,6 +58,7 @@ fun AppNavGraph(
 
         composable(Screen.Cart.route) {
             CartScreen(
+                modifier = Modifier.testTag("CartScreen"),
                 onBookClick = { bookId ->
                     navController.navigate(Screen.BookDetail.createRoute(bookId))
                 }
@@ -63,11 +66,14 @@ fun AppNavGraph(
         }
 
         composable(Screen.Statistics.route) {
-            StatisticsScreen()
+            StatisticsScreen(
+                modifier = Modifier.testTag("StatisticsScreen")
+            )
         }
 
         composable(Screen.Search.route) {
             SearchScreen(
+                modifier = Modifier.testTag("SearchScreen"),
                 history = emptyList(),
                 onBack = {},
                 onClearAll = {},

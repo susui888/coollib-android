@@ -55,6 +55,7 @@ import com.example.coollib.ui.theme.CoolLibTheme
 
 @Composable
 fun BookDetailScreen(
+    modifier: Modifier = Modifier,
     bookId: Int,
     bookViewModel: BookViewModel = hiltViewModel(),
     cartViewModel: CartViewModel = hiltViewModel(),
@@ -74,6 +75,7 @@ fun BookDetailScreen(
 
     selectedBook?.let { book ->
         BookDetailScreenContent(
+            modifier = modifier,
             book = book,
             isInCart = isInCart,
             isFavorite = isFavorite,

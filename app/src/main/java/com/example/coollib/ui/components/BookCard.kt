@@ -25,10 +25,12 @@ import com.example.coollib.ui.model.BookItemUiModel
 @Composable
 fun BookCard(
     book: BookItemUiModel,
-    onBookClick: (Int) -> Unit
+    onBookClick: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     ElevatedCard(
-        onClick = { onBookClick(book.id) }
+        onClick = { onBookClick(book.id) },
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.padding(10.dp),

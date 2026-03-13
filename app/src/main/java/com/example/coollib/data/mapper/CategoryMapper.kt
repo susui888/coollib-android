@@ -12,3 +12,8 @@ fun CategoryDto.toDomain() = Category(
     coverUrl = "${APIConfig.SERVER}/img/$id.webp",
 )
 
+fun Category.toDto() = CategoryDto(
+    this.id,
+    this.name,
+    this.description,
+)

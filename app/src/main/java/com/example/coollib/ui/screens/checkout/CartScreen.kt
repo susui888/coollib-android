@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,15 +59,17 @@ import com.example.coollib.ui.theme.CoolLibTheme
 
 @Composable
 fun CartScreen(
+    modifier: Modifier = Modifier,
     cartViewModel: CartViewModel = hiltViewModel(),
     wishlistViewModel: WishlistViewModel = hiltViewModel(),
-    onBookClick: (Int) -> Unit,
+    onBookClick: (Int) -> Unit
 ){
 
     val cartItems by cartViewModel.cartItems.collectAsStateWithLifecycle()
     val wishlist by wishlistViewModel.wishlist.collectAsStateWithLifecycle()
 
     CartScreenContent(
+        modifier = modifier,
         cartItems = cartItems,
         wishlistItems = wishlist,
         isBorrowing = false,
@@ -77,7 +80,7 @@ fun CartScreen(
         onRemoveWishlistItem = { bookId ->
             wishlistViewModel.removeFromWishlist(bookId)
         },
-        onBorrow = {}
+        onBorrow = {},
     )
 }
 
@@ -164,7 +167,8 @@ fun CartSegmentedPicker(
             shape = SegmentedButtonDefaults.itemShape(
                 index = 0,
                 count = 2
-            )
+            ),
+            modifier = Modifier.testTag("Tab_Cart")
         ) {
             Text(stringResource(R.string.cart_label))
         }
@@ -175,7 +179,8 @@ fun CartSegmentedPicker(
             shape = SegmentedButtonDefaults.itemShape(
                 index = 1,
                 count = 2
-            )
+            ),
+            modifier = Modifier.testTag("Tab_Wishlist")
         ) {
             Text(stringResource(R.string.wishlist_label))
         }
@@ -194,7 +199,8 @@ fun CartList(
         EmptyView(
             icon = Icons.Default.ShoppingCart,
             title = stringResource(R.string.cart_is_empty),
-            subtitle = stringResource(R.string.empty_msg)
+            subtitle = stringResource(R.string.empty_msg),
+            modifier = Modifier.testTag("EmptyCartView")
         )
 
     } else {
@@ -211,7 +217,8 @@ fun CartList(
                 ) {
                     BookRow(
                         book = cart.toUiModel(),
-                        onBookClick = onBookClick
+                        onBookClick = onBookClick,
+                        modifier = Modifier.testTag("Book_${cart.id}")
                     )
                 }
             }
@@ -231,7 +238,8 @@ fun WishlistList(
         EmptyView(
             icon = Icons.Default.FavoriteBorder,
             title = stringResource(R.string.no_saved_books),
-            subtitle = stringResource(R.string.empty_msg)
+            subtitle = stringResource(R.string.empty_msg),
+            modifier = Modifier.testTag("EmptyCartView")
         )
 
     } else {
@@ -249,7 +257,8 @@ fun WishlistList(
 
                     BookRow(
                         book = wishlist.toUiModel(),
-                        onBookClick = onBookClick
+                        onBookClick = onBookClick,
+                        modifier = Modifier.testTag("Book_${wishlist.id}")
                     )
                 }
             }
@@ -278,7 +287,9 @@ fun BorrowButtonBar(
 
             Button(
                 onClick = onBorrowClick,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .testTag("BorrowButton")
+                    .fillMaxWidth(),
                 enabled = !isLoading,
                 shape = MaterialTheme.shapes.medium
             ) {
@@ -307,11 +318,12 @@ fun BorrowButtonBar(
 fun EmptyView(
     icon: ImageVector,
     title: String,
-    subtitle: String
+    subtitle: String,
+    modifier: Modifier = Modifier,
 ) {
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
