@@ -32,19 +32,48 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 
+@Composable
+fun SearchScreen(
+    modifier: Modifier = Modifier,
+    viewModel: SearchViewModel = hiltViewModel(),
+    onBack: () -> Unit,
+    onSearch: (String) -> Unit
+) {
+    val history by viewModel.history.collectAsStateWithLifecycle()
+
+    SearchScreenContent(
+        modifier = modifier,
+        history = history.map { it.keyword },
+        onBack = onBack,
+        onClearAll = {
+            viewModel.clearHistory()
+        },
+        onDeleteItem = { keyword ->
+            viewModel.deleteSearch(keyword = keyword)
+        },
+        onSearch = { keyword ->
+            if (keyword.isNotBlank()) {
+                viewModel.addSearch(keyword)
+                onSearch(keyword)
+            }
+        }
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
+fun SearchScreenContent(
     modifier: Modifier = Modifier,
     history: List<String>,
     onBack: () -> Unit,
     onClearAll: () -> Unit,
     onDeleteItem: (String) -> Unit,
-    onSearch: (String) -> Unit)
-{
+    onSearch: (String) -> Unit
+) {
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(true) }
 
@@ -85,7 +114,10 @@ fun SearchScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(stringResource(R.string.label_newest_search), style = MaterialTheme.typography.titleSmall)
+                        Text(
+                            stringResource(R.string.label_newest_search),
+                            style = MaterialTheme.typography.titleSmall
+                        )
                         TextButton(onClick = onClearAll) {
                             Text(stringResource(R.string.label_clear))
                         }
@@ -115,7 +147,7 @@ fun SearchScreen(
 @Composable
 fun PreviewSearchWithHistory() {
     MaterialTheme {
-        SearchScreen(
+        SearchScreenContent(
             history = listOf("Kotlin", "Jetpack Compose", "Android 15"),
             onBack = {},
             onClearAll = {},
@@ -129,7 +161,7 @@ fun PreviewSearchWithHistory() {
 @Composable
 fun PreviewSearchEmpty() {
     MaterialTheme {
-        SearchScreen(
+        SearchScreenContent(
             history = emptyList(),
             onBack = {},
             onClearAll = {},

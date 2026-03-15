@@ -74,10 +74,9 @@ fun AppNavGraph(
         composable(Screen.Search.route) {
             SearchScreen(
                 modifier = Modifier.testTag("SearchScreen"),
-                history = emptyList(),
-                onBack = {},
-                onClearAll = {},
-                onDeleteItem = {},
+                onBack = {
+                    navController.popBackStack()
+                },
                 onSearch = { searchTerm ->
                     navController.navigate(Screen.Books.createRoute(SearchQuery(searchTerm = searchTerm)))
                 }

@@ -50,7 +50,7 @@ fun HomeScreen(
     wishlistViewModel: WishlistViewModel = hiltViewModel(),
     onCategoryClick: (Int) -> Unit,
     onBookClick: (Int) -> Unit
-){
+) {
     val category by homeViewModel.category.collectAsStateWithLifecycle()
     val lastViewBooks by homeViewModel.lastViewBooks.collectAsStateWithLifecycle()
     val wishlist by wishlistViewModel.wishlist.collectAsStateWithLifecycle()
@@ -68,8 +68,7 @@ fun HomeScreen(
 }
 
 data class HomeSection(
-    val titleRes: Int,
-    val books: List<BookItemUiModel>
+    val titleRes: Int, val books: List<BookItemUiModel>
 )
 
 @Composable
@@ -101,8 +100,7 @@ fun HomeScreenContent(
 
         item {
             CategoryRow(
-                categories = categoryList,
-                onCategoryClick = onCategoryClick
+                categories = categoryList, onCategoryClick = onCategoryClick
             )
         }
 
@@ -135,9 +133,7 @@ fun SectionTitle(
 
 @Composable
 fun CategoryRow(
-    categories: List<Category>,
-    onCategoryClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    categories: List<Category>, onCategoryClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
 
     LazyRow(
@@ -149,18 +145,14 @@ fun CategoryRow(
         items(categories) { category ->
 
             CategoryItem(
-                category = category,
-                onCategoryClick = { onCategoryClick(category.id) }
-            )
+                category = category, onCategoryClick = { onCategoryClick(category.id) })
         }
     }
 }
 
 @Composable
 fun CategoryItem(
-    category: Category,
-    onCategoryClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    category: Category, onCategoryClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
 
     ElevatedCard(
@@ -177,8 +169,8 @@ fun CategoryItem(
 
             AsyncImage(
                 model = category.coverUrl,
-                placeholder = paintBookCover(category.id.toString(),category.name),
-                error = paintBookCover(category.id.toString(),category.name),
+                placeholder = paintBookCover(category.id.toString(), category.name),
+                error = paintBookCover(category.id.toString(), category.name),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp),
@@ -203,9 +195,7 @@ fun CategoryItem(
 
 @Composable
 fun BookRow(
-    books: List<BookItemUiModel>,
-    onBookClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    books: List<BookItemUiModel>, onBookClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
 
     LazyRow(
@@ -217,18 +207,14 @@ fun BookRow(
         items(books) { book ->
 
             BookItem(
-                book = book,
-                onBookClick = { onBookClick(book.id) }
-            )
+                book = book, onBookClick = { onBookClick(book.id) })
         }
     }
 }
 
 @Composable
 fun BookItem(
-    book: BookItemUiModel,
-    onBookClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    book: BookItemUiModel, onBookClick: (Int) -> Unit, modifier: Modifier = Modifier
 ) {
 
     ElevatedCard(
