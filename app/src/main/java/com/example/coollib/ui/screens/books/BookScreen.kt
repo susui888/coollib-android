@@ -47,7 +47,7 @@ fun BookScreen(
     viewModel: BookViewModel = hiltViewModel(),
     query: SearchQuery,
     onBookClick: (Int) -> Unit
-){
+) {
     LaunchedEffect(Unit) {
         viewModel.searchBooks(query)
     }
@@ -99,7 +99,7 @@ fun BookScreenContent(
             }
         }
 
-        when (listMode){
+        when (listMode) {
             true -> BookList(books, onBookClick)
             else -> BookGrid(books, onBookClick)
         }

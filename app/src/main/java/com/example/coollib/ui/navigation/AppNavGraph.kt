@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.coollib.domain.model.SearchQuery
+import com.example.coollib.ui.screens.auth.LoginScreen
+import com.example.coollib.ui.screens.auth.RegisterScreen
 import com.example.coollib.ui.screens.books.SearchScreen
 import com.example.coollib.ui.screens.checkout.CartScreen
 import com.example.coollib.ui.screens.home.HomeScreen
@@ -86,5 +88,20 @@ fun AppNavGraph(
         booksRoute(navController)
 
         bookDetailRoute(navController)
+
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onLoggedIn = { navController.popBackStack() },
+                onRegisterClick = { navController.navigate(Screen.Register.route) },
+                onClose = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Register.route) {
+            RegisterScreen(
+                onRegistered = { navController.popBackStack() },
+                onBackClick = { navController.popBackStack() }
+            )
+        }
     }
 }

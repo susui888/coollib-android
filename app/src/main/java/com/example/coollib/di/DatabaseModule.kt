@@ -7,7 +7,6 @@ import com.example.coollib.data.local.BookDao
 import com.example.coollib.data.local.CartDao
 import com.example.coollib.data.local.SearchHistoryDao
 import com.example.coollib.data.local.WishlistDao
-import com.example.coollib.domain.model.Wishlist
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
