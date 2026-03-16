@@ -15,6 +15,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,18 +28,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.coollib.R
 
 @Composable
 fun RegisterScreen(
-    onRegistered: () -> Unit = {},
+    modifier: Modifier = Modifier,
+    viewModel: UserViewModel = hiltViewModel(),
+    onRegistered: (String) -> Unit = {},
     onBackClick: () -> Unit = {}
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var registerError by remember { mutableStateOf<String?>(null) }
+
+    val registerResult by viewModel.registerResult.collectAsState()
+
+    val registerError = registerResult?.exceptionOrNull()?.message
+
 
     RegisterScreenContent(
         username = username,
@@ -47,15 +56,26 @@ fun RegisterScreen(
         email = email,
         onEmailChange = { email = it },
         onRegisterClick = {
-            // TODO: 替换为真正注册逻辑
-            if (username.isNotBlank() && password.isNotBlank()) {
-                onRegistered() // 注册成功后返回上一页
+            if (username.isNotBlank() && password.isNotBlank() && email.isNotBlank()) {
+                viewModel.register(username, password, email)
             } else {
-                registerError = "Please fill all required fields"
+                viewModel.clearRegisterResult()
             }
         },
         registerError = registerError
     )
+
+    LaunchedEffect(registerResult) {
+        registerResult?.fold(
+            onSuccess = { message ->
+                if (message.isNotBlank()) {
+                    onRegistered("User registered successfully.")
+                    viewModel.clearRegisterResult()
+                }
+            },
+            onFailure = { }
+        )
+    }
 }
 
 @Composable
@@ -86,14 +106,14 @@ fun RegisterScreenContent(
             contentScale = ContentScale.Fit
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = "Create an account",
             style = MaterialTheme.typography.headlineSmall
         )
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(22.dp))
 
         // Input Card
         Card(

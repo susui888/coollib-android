@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)
+    implementation(libs.converter.scalars)
 
     // Room
     implementation(libs.androidx.room.ktx)

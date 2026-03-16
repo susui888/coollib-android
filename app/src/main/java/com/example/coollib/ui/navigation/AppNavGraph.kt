@@ -36,7 +36,8 @@ import com.example.coollib.ui.screens.statistics.StatisticsScreen
 @Composable
 fun AppNavGraph(
     navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLoginSuccess: (token: String, username: String) -> Unit
 ) {
 
     NavHost(
@@ -91,7 +92,11 @@ fun AppNavGraph(
 
         composable(Screen.Login.route) {
             LoginScreen(
-                onLoggedIn = { navController.popBackStack() },
+                navController = navController,
+                onLoggedIn = { token, username ->
+                    onLoginSuccess(token, username)
+                    navController.popBackStack()
+                             },
                 onRegisterClick = { navController.navigate(Screen.Register.route) },
                 onClose = { navController.popBackStack() }
             )
@@ -99,7 +104,11 @@ fun AppNavGraph(
 
         composable(Screen.Register.route) {
             RegisterScreen(
-                onRegistered = { navController.popBackStack() },
+                onRegistered = { msg ->
+                    navController.previousBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("msg", msg)
+                    navController.navigate(Screen.Home.route) },
                 onBackClick = { navController.popBackStack() }
             )
         }
