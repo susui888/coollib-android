@@ -17,6 +17,8 @@ class BookUseCase @Inject constructor(
     suspend fun getBookById(id: Int): Book? =
         repository.getBookById(id)
 
+    suspend fun getBookByIsbn(isbn: String): Book? =
+        repository.getBookByIsbn(isbn)
 
     suspend fun getCategory(): List<Category> =
         repository.getCategory()

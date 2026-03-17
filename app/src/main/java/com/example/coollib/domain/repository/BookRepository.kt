@@ -10,6 +10,7 @@ interface BookRepository {
 
     suspend fun searchBooks(query: SearchQuery): List<Book>
     suspend fun getBookById(id: Int): Book?
+    suspend fun getBookByIsbn(isbn: String): Book?
     suspend fun getCategory(): List<Category>
     fun getBooks(limit: Int): Flow<List<Book>>
 

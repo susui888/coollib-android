@@ -2,6 +2,7 @@ package com.example.coollib.ui.screens.checkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.coollib.data.local.SessionManager
 import com.example.coollib.domain.model.Cart
 import com.example.coollib.domain.usecase.CartUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-    private val cartUseCase: CartUseCase
+    private val cartUseCase: CartUseCase,
+    private val sessionManager: SessionManager // 注入 SessionManager 来检查登录状态
 ) : ViewModel() {
 
     // UI State: Handle loading, etc.
@@ -56,6 +58,14 @@ class CartViewModel @Inject constructor(
 
     // Execute borrow logic
     fun borrowBooks() {
+        // 1. 检查登录状态
+        if (sessionManager.getToken().isNullOrEmpty()) {
+            viewModelScope.launch {
+                _uiEvent.emit(CartUiEvent.NavigateToLogin)
+            }
+            return
+        }
+
         val currentItems = cartItems.value
         if (currentItems.isEmpty()) return
 
@@ -86,4 +96,5 @@ data class CartUiState(
 sealed class CartUiEvent {
     data class ShowSnackbar(val message: String) : CartUiEvent()
     object NavigateBack : CartUiEvent()
+    object NavigateToLogin : CartUiEvent() // 新增：跳转登录事件
 }

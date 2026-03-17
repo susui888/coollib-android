@@ -37,6 +37,16 @@ class BookRepositoryImpl @Inject constructor(
             response.body()?.map { it.toDomain() }.orEmpty()
     }
 
+    override suspend fun getBookByIsbn(isbn: String): Book? =
+        withContext(Dispatchers.IO) {
+            val response = api.getBookByIsbn(isbn)
+
+            if (!response.isSuccessful) {
+                throw HttpException(response)
+            }
+
+            response.body()?.toDomain()
+        }
 
     override suspend fun getBookById(id: Int): Book? =
         withContext(Dispatchers.IO) {

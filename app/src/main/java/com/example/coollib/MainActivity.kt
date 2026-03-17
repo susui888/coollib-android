@@ -1,8 +1,6 @@
 package com.example.coollib
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.MediaStore
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -12,7 +10,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -23,13 +23,10 @@ import com.example.coollib.data.local.SessionManager
 import com.example.coollib.ui.components.BottomBar
 import com.example.coollib.ui.components.TopBar
 import com.example.coollib.ui.navigation.AppNavGraph
+import com.example.coollib.ui.navigation.Screen
 import com.example.coollib.ui.screens.checkout.CartViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
 import dagger.hilt.android.AndroidEntryPoint
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -78,8 +75,7 @@ fun MainScreen(
                     username = null
                 },
                 onScanClick = {
-                    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    context.startActivity(intent)
+                    navController.navigate(Screen.Scanner.route)
                 }
             )
         },

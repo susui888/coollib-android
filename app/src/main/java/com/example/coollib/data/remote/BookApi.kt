@@ -9,6 +9,10 @@ interface BookApi {
 
     @GET("books/{id}")
     suspend fun getBookById(@Path("id") id: Int): Response<BookDto>
+
+    @GET("books/isbn/{isbn}")
+    suspend fun getBookByIsbn(@Path("isbn") isbn: String): Response<BookDto>
+
     @GET("books/search")
     suspend fun searchBooks(
         @Query("category") category: Int? = null,

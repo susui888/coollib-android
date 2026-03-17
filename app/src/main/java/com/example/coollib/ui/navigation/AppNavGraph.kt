@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.ui.screens.auth.LoginScreen
 import com.example.coollib.ui.screens.auth.RegisterScreen
+import com.example.coollib.ui.screens.scan.ScannerScreen
 import com.example.coollib.ui.screens.books.SearchScreen
 import com.example.coollib.ui.screens.checkout.CartScreen
 import com.example.coollib.ui.screens.home.HomeScreen
@@ -62,8 +63,11 @@ fun AppNavGraph(
         composable(Screen.Cart.route) {
             CartScreen(
                 modifier = Modifier.testTag("CartScreen"),
+                onBack = { navController.popBackStack() },
                 onBookClick = { bookId ->
                     navController.navigate(Screen.BookDetail.createRoute(bookId))
+                },
+                onLogin = { navController.navigate(Screen.Login.route)
                 }
             )
         }
@@ -110,6 +114,18 @@ fun AppNavGraph(
                         ?.set("msg", msg)
                     navController.navigate(Screen.Home.route) },
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.Scanner.route) {
+            ScannerScreen(
+                onNavigateToCart = {
+                    navController.navigate(Screen.Cart.route) {
+                        // 扫描成功后跳转到购物车并清除扫描页
+                        popUpTo(Screen.Scanner.route) { inclusive = true }
+                    }
+                },
+                onBack = { navController.popBackStack() }
             )
         }
     }

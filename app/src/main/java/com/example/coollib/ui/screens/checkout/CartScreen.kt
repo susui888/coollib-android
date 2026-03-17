@@ -67,6 +67,7 @@ fun CartScreen(
     cartViewModel: CartViewModel = hiltViewModel(),
     wishlistViewModel: WishlistViewModel = hiltViewModel(),
     onBack: () -> Unit = {},
+    onLogin: () -> Unit = {},
     onBookClick: (Int) -> Unit
 ){
 
@@ -81,6 +82,9 @@ fun CartScreen(
             when (event) {
                 is CartUiEvent.ShowSnackbar ->{
                     snackbarHostState.showSnackbar(event.message)
+                }
+                CartUiEvent.NavigateToLogin -> {
+                    onLogin()
                 }
                 CartUiEvent.NavigateBack -> {
                     onBack()
