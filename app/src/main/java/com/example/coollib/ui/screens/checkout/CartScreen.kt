@@ -26,6 +26,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
@@ -37,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,23 +59,42 @@ import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockCart
 import com.example.coollib.ui.previewSupport.MockWishlist
 import com.example.coollib.ui.theme.CoolLibTheme
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CartScreen(
     modifier: Modifier = Modifier,
     cartViewModel: CartViewModel = hiltViewModel(),
     wishlistViewModel: WishlistViewModel = hiltViewModel(),
+    onBack: () -> Unit = {},
     onBookClick: (Int) -> Unit
 ){
 
     val cartItems by cartViewModel.cartItems.collectAsStateWithLifecycle()
     val wishlist by wishlistViewModel.wishlist.collectAsStateWithLifecycle()
 
+    val uiState by cartViewModel.uiState.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        cartViewModel.uiEvent.collectLatest { event ->
+            when (event) {
+                is CartUiEvent.ShowSnackbar ->{
+                    snackbarHostState.showSnackbar(event.message)
+                }
+                CartUiEvent.NavigateBack -> {
+                    onBack()
+                }
+            }
+        }
+    }
+
     CartScreenContent(
         modifier = modifier,
         cartItems = cartItems,
         wishlistItems = wishlist,
-        isBorrowing = false,
+        isBorrowing = uiState.isLoading,
+        snackbarHostState = snackbarHostState,
         onBookClick = onBookClick,
         onRemoveCartItem = { bookId ->
             cartViewModel.removeFromCart(bookId)
@@ -80,7 +102,9 @@ fun CartScreen(
         onRemoveWishlistItem = { bookId ->
             wishlistViewModel.removeFromWishlist(bookId)
         },
-        onBorrow = {},
+        onBorrow = {
+            cartViewModel.borrowBooks()
+        },
     )
 }
 
@@ -99,14 +123,16 @@ fun CartScreenContent(
     onRemoveCartItem: (Int) -> Unit,
     onRemoveWishlistItem: (Int) -> Unit,
     onBorrow: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
 
     var selectedTab by remember { mutableStateOf(CartTab.CART) }
 
     Scaffold(
-        bottomBar = {
+        snackbarHost = { SnackbarHost(snackbarHostState) },
 
+        bottomBar = {
             if (selectedTab == CartTab.CART && cartItems.isNotEmpty()) {
                 BorrowButtonBar(
                     count = cartItems.size,

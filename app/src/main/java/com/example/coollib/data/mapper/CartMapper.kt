@@ -2,6 +2,7 @@ package com.example.coollib.data.mapper
 
 import com.example.coollib.data.local.CartEntity
 import com.example.coollib.data.remote.APIConfig
+import com.example.coollib.data.remote.CartDto
 import com.example.coollib.domain.model.Cart
 
 fun CartEntity.toDomain() = Cart(
@@ -13,4 +14,7 @@ fun CartEntity.toDomain() = Cart(
     this.year,
     coverUrl = "${APIConfig.SERVER}/img/cover/$isbn.webp",
 )
-
+fun Cart.toDto() = CartDto(
+    bookId = this.id,
+    quantity = 1
+)

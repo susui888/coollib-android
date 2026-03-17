@@ -13,6 +13,7 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 private const val TAG = "UserViewModel"
+
 @HiltViewModel
 class UserViewModel @Inject constructor(
     private val userUseCase: UserUseCase,

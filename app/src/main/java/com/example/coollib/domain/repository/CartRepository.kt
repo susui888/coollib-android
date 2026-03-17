@@ -15,4 +15,5 @@ interface CartRepository {
     suspend fun removeFromCart(id: Int)
 
     suspend fun addToCart(book: Book)
+    suspend fun borrowBooks(carts: List<Cart>): Result<String>
 }

@@ -24,9 +24,10 @@ class CartUseCase @Inject constructor(
         cartRepository.removeFromCart(bookId)
 
     suspend fun addToCart(bookId: Int) {
-
         val book = bookRepository.getBookById(bookId) ?: return
-
         cartRepository.addToCart(book)
     }
+
+    suspend fun borrowBooks(carts: List<Cart>): Result<String> =
+        cartRepository.borrowBooks(carts)
 }
