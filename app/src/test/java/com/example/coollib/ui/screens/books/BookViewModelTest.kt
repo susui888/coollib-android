@@ -7,10 +7,7 @@ import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.resetMain
-import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
+import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -19,14 +16,12 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class BookViewModelTest {
 
-    private lateinit var viewModel: BookViewModel
     private val bookUseCase: BookUseCase = mockk()
-
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
+    private lateinit var viewModel: BookViewModel
 
     @Before
     fun setup() {
-        // 覆盖 Main Dispatcher
         Dispatchers.setMain(testDispatcher)
         viewModel = BookViewModel(bookUseCase)
     }
@@ -37,31 +32,29 @@ class BookViewModelTest {
     }
 
     @Test
-    fun searchBooks_updatesBooksState() = runTest {
+    fun `searchBooks should update books state with results from use case`() = runTest {
+        // Given
         val books = MockBooks.list
         val query = SearchQuery()
-
         coEvery { bookUseCase.searchBooks(query) } returns books
 
+        // When
         viewModel.searchBooks(query)
 
-        // 推进 coroutine 执行完成
-        testDispatcher.scheduler.advanceUntilIdle()
-
+        // Then
         assertEquals(books, viewModel.books.value)
     }
 
     @Test
-    fun selectBook_updatesSelectedBookState() = runTest {
+    fun `selectBook should update selectedBook state with result from use case`() = runTest {
+        // Given
         val firstBook = MockBooks.list.first()
-
         coEvery { bookUseCase.getBookById(firstBook.id) } returns firstBook
 
+        // When
         viewModel.selectBook(firstBook.id)
 
-        // 推进 coroutine 执行完成
-        testDispatcher.scheduler.advanceUntilIdle()
-
+        // Then
         assertEquals(firstBook, viewModel.selectedBook.value)
     }
 }

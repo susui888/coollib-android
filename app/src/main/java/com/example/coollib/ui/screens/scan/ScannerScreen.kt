@@ -1,7 +1,14 @@
 package com.example.coollib.ui.screens.scan
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.ToneGenerator
+import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,6 +40,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+
 @Composable
 fun ScannerScreen(
     viewModel: ScanViewModel = hiltViewModel(),
@@ -40,7 +48,6 @@ fun ScannerScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // 1. Handle Permissions
@@ -64,8 +71,14 @@ fun ScannerScreen(
     // 2. Listen for Events
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
-            if (event is ScanUiEvent.NavigateToCart) {
-                onNavigateToCart()
+            when (event) {
+                is ScanUiEvent.NavigateToCart -> {
+                    performSuccessFeedback(context)
+                    onNavigateToCart()
+                }
+                is ScanUiEvent.ShowError -> {
+                    // Feedback for error could be added here
+                }
             }
         }
     }
@@ -141,6 +154,27 @@ fun ScannerScreen(
     }
 }
 
+private fun performSuccessFeedback(context: Context) {
+    // 1. Vibration
+    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+        vibratorManager.defaultVibrator
+    } else {
+        @Suppress("DEPRECATION")
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    }
+
+    vibrator.vibrate(VibrationEffect.createOneShot(150, VibrationEffect.DEFAULT_AMPLITUDE))
+
+    // 2. Sound
+    try {
+        val toneGenerator = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100)
+        toneGenerator.startTone(ToneGenerator.TONE_PROP_ACK, 200)
+    } catch (e: Exception) {
+        Log.e("ScannerScreen", "Failed to play tone", e)
+    }
+}
+
 @OptIn(ExperimentalGetImage::class)
 @Composable
 fun BarcodeScannerScreen(
@@ -156,6 +190,7 @@ fun BarcodeScannerScreen(
     }
     val scanner = remember { BarcodeScanning.getClient(options) }
 
+    @Suppress("DEPRECATION")
     val cameraController = remember {
         LifecycleCameraController(context).apply {
             setImageAnalysisAnalyzer(
