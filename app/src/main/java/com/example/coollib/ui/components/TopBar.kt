@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.coollib.R
+import com.example.coollib.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,20 +84,23 @@ fun TopBar(
             when (action) {
 
                 "LOGIN" ->
-                    navController.navigate("login")
+                    navController.navigate(Screen.Login.route)
 
                 "PROFILE" ->
                     navController.navigate("profile")
 
                 "MY_LOANS" ->
-                    navController.navigate("loans")
+                    navController.navigate(Screen.Loan.createRoute("borrowed"))
+
+                "HISTORY" ->
+                    navController.navigate(Screen.Loan.createRoute("history"))
 
                 "ABOUT" ->
                     navController.navigate("about")
 
                 "LOGOUT" -> {
                     onLogout()
-                    navController.navigate("login") {
+                    navController.navigate(Screen.Login.route) {
                         popUpTo(0)
                     }
                 }

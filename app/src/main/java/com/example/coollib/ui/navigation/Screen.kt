@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.Login
 import androidx.compose.material.icons.rounded.Analytics
 import androidx.compose.material.icons.rounded.Book
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Login
 import androidx.compose.material.icons.rounded.PersonAdd
@@ -39,6 +40,10 @@ sealed class Screen(
     data object Cart: Screen("cart", R.string.cart_label, Icons.Rounded.ShoppingBasket)
     data object Statistics: Screen("statistics",R.string.statistics_label,Icons.Rounded.Analytics)
     data object Search: Screen("search", R.string.search_label,Icons.Rounded.Search)
+    
+    data object Loan: Screen("loan/{filter}", R.string.loan_history_label, Icons.Rounded.History) {
+        fun createRoute(filter: String) = "loan/$filter"
+    }
 
     //Nested screen
     data object BookDetail: Screen("bookDetail/{id}", 0, Icons.Rounded.Book){
@@ -49,7 +54,6 @@ sealed class Screen(
     data object Login: Screen("login", 0, Icons.AutoMirrored.Rounded.Login)
     data object Register: Screen("register", 0, Icons.Rounded.PersonAdd)
     
-    // Scanner
     data object Scanner: Screen("scanner", 0, Icons.Rounded.QrCodeScanner)
 }
 

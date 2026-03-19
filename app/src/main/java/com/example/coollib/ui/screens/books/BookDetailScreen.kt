@@ -126,7 +126,8 @@ fun BookDetailScreenContent(
                     .border(1.dp, Color.LightGray)
                     .clip(RectangleShape),
                 contentScale = ContentScale.FillBounds,
-                placeholder = paintBookCover(book.title, book.author)
+                placeholder = paintBookCover(book.title, book.author),
+                error = paintBookCover(book.title, book.author)
             )
 
             Text(

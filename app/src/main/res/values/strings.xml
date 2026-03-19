@@ -9,6 +9,8 @@
     <string name="password">Password</string>
     <string name="password_placeholder">Enter your password</string>
     <string name="message_text">email: %s, password: %s</string>
+    <string name="login_button">Login</string>
+    <string name="please_login">Please login to see your loan history</string>
 
     <!-- ================= Bottom Navigation ================= -->
     <string name="home_label">Home</string>
@@ -70,4 +72,7 @@
     <string name="empty_msg">Books you add will appear here.</string>
     <string name="no_saved_books">No saved books</string>
     <string name="confirm_borrow_books">CONFIRM BORROW (%1$d BOOKS)</string>
+
+    <!-- ================= Loans ================= -->
+    <string name="loan_history_label">Loan History</string>
 </resources>

@@ -13,26 +13,9 @@ import com.example.coollib.ui.screens.scan.ScannerScreen
 import com.example.coollib.ui.screens.books.SearchScreen
 import com.example.coollib.ui.screens.checkout.CartScreen
 import com.example.coollib.ui.screens.home.HomeScreen
+import com.example.coollib.ui.screens.statistics.LoanScreen
 import com.example.coollib.ui.screens.statistics.StatisticsScreen
 
-
-/*
-    NavController
-        → 控制页面跳转
-        → 例如：navController.navigate("books")
-
-    NavHost
-        → 管理所有页面
-        → 指定 startDestination（默认页面）
-
-    route
-        → 每个页面的唯一地址
-        → 例如："home" / "books"
-
-    composable
-        → 注册一个 Compose 页面
-        → composable("home") { HomeScreen() }
-*/
 
 @Composable
 fun AppNavGraph(
@@ -74,7 +57,17 @@ fun AppNavGraph(
 
         composable(Screen.Statistics.route) {
             StatisticsScreen(
-                modifier = Modifier.testTag("StatisticsScreen")
+                modifier = Modifier.testTag("StatisticsScreen"),
+                onSeeMoreLoans = {
+                    navController.navigate(Screen.Loan.route)
+                }
+            )
+        }
+        
+        composable(Screen.Loan.route) {
+            LoanScreen(
+                onBack = { navController.popBackStack() },
+                onLogin = { navController.navigate(Screen.Login.route) }
             )
         }
 
@@ -121,7 +114,6 @@ fun AppNavGraph(
             ScannerScreen(
                 onNavigateToCart = {
                     navController.navigate(Screen.Cart.route) {
-                        // 扫描成功后跳转到购物车并清除扫描页
                         popUpTo(Screen.Scanner.route) { inclusive = true }
                     }
                 },

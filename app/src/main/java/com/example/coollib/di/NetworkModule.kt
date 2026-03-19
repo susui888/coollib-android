@@ -6,6 +6,7 @@ import com.example.coollib.data.remote.APIConfig
 import com.example.coollib.data.remote.AuthInterceptor
 import com.example.coollib.data.remote.BookApi
 import com.example.coollib.data.remote.CartApi
+import com.example.coollib.data.remote.LoanApi
 import com.example.coollib.data.remote.LocalDateAdapter
 import com.example.coollib.data.remote.UserApi
 import com.squareup.moshi.Moshi
@@ -96,5 +97,12 @@ object NetworkModule {
         retrofit: Retrofit
     ): CartApi {
         return retrofit.create(CartApi::class.java)
+    }
+
+    @Provides
+    fun provideLoanApi(
+        retrofit: Retrofit
+    ): LoanApi {
+        return retrofit.create(LoanApi::class.java)
     }
 }
