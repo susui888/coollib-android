@@ -1,6 +1,6 @@
 name: Android CI/CD
 
-# Control when the workflow will run
+# Control when the workflows will run
 on:
   push:
     branches: [ "main", "master" ]
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out the repository so the workflow can access it
+      # Step 1: Check out the repository so the workflows can access it
       - name: Checkout Code
         uses: actions/checkout@v4
 
