@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.coollib.R
 import com.example.coollib.domain.model.Category
 import com.example.coollib.ui.components.paintBookCover
@@ -168,7 +171,12 @@ fun CategoryItem(
         ) {
 
             AsyncImage(
-                model = category.coverUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(category.coverUrl)
+                    .diskCacheKey(category.coverUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 placeholder = paintBookCover(category.id.toString(), category.name),
                 error = paintBookCover(category.id.toString(), category.name),
                 modifier = Modifier
@@ -231,7 +239,12 @@ fun BookItem(
         ) {
 
             AsyncImage(
-                model = book.coverUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(book.coverUrl)
+                    .diskCacheKey(book.coverUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 placeholder = paintBookCover(book.title, book.author),
                 error = paintBookCover(book.title, book.author),
                 modifier = Modifier

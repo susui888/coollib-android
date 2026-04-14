@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.coollib.data.local.AppDatabase
 import com.example.coollib.data.local.BookDao
 import com.example.coollib.data.local.CartDao
+import com.example.coollib.data.local.CategoryDao
 import com.example.coollib.data.local.SearchHistoryDao
 import com.example.coollib.data.local.WishlistDao
 import dagger.Module
@@ -52,4 +53,9 @@ object DatabaseModule {
     fun provideSearchHistoryDao(
         database: AppDatabase
     ): SearchHistoryDao = database.searchHistoryDao()
+
+    @Provides
+    fun provideCategoryDao(
+        database: AppDatabase
+    ): CategoryDao = database.categoryDao()
 }

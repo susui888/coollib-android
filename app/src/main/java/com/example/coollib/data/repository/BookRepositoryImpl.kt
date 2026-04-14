@@ -1,6 +1,7 @@
 package com.example.coollib.data.repository
 
 import com.example.coollib.data.local.BookDao
+import com.example.coollib.data.local.CategoryDao
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.data.mapper.toEntity
 import com.example.coollib.data.remote.BookApi
@@ -11,13 +12,15 @@ import com.example.coollib.domain.repository.BookRepository
 import jakarta.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class BookRepositoryImpl @Inject constructor(
         private val api: BookApi,
-        private val bookDao: BookDao
+        private val bookDao: BookDao,
+        private val categoryDao: CategoryDao,
     ) : BookRepository {
 
     override suspend fun searchBooks(query: SearchQuery): List<Book> =
@@ -72,13 +75,26 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun getCategory(): List<Category> =
         withContext(Dispatchers.IO) {
+            val localData = categoryDao.getAllCategory().first()
+
+            if (localData.isNotEmpty()) {
+                return@withContext localData.map { it.toDomain() }
+            }
+
             val response = api.getCategory()
 
             if (!response.isSuccessful) {
                 throw HttpException(response)
             }
 
-            response.body()?.map { it.toDomain() }.orEmpty()
+            val remoteData = response.body().orEmpty()
+
+            if (remoteData.isNotEmpty()) {
+                val entities = remoteData.map { it.toEntity() }
+                categoryDao.insertAll(entities)
+            }
+
+            remoteData.map { it.toDomain() }
         }
 
     override fun getBooks(limit: Int): Flow<List<Book>> =

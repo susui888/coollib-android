@@ -49,6 +49,7 @@ import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Loan
 import com.example.coollib.domain.model.LoanStatus
+import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockLoans
 import com.example.coollib.ui.theme.CoolLibTheme
@@ -189,7 +190,9 @@ fun LoanItem(loan: Loan) {
                         .size(60.dp, 90.dp)
                         .clip(RoundedCornerShape(4.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    placeholder = paintBookCover(loan.book?.title?:"", loan.book?.author?:""),
+                    error = paintBookCover(loan.book?.title?:"", loan.book?.author?:""),
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))

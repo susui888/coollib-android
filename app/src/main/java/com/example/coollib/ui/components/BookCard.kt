@@ -16,10 +16,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.coollib.ui.model.BookItemUiModel
 
 @Composable
@@ -38,7 +41,12 @@ fun BookCard(
         ) {
 
             AsyncImage(
-                model = book.coverUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(book.coverUrl)
+                    .diskCacheKey(book.coverUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 contentDescription = book.title,
                 modifier = Modifier
                     .size(width = 90.dp, height = 135.dp)

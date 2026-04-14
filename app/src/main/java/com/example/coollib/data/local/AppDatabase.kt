@@ -9,8 +9,9 @@ import androidx.room.RoomDatabase
         CartEntity::class,
         WishlistEntity::class,
         SearchHistoryEntity::class,
+        CategoryEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -19,4 +20,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun wishlistDao(): WishlistDao
 
     abstract fun searchHistoryDao(): SearchHistoryDao
+
+    abstract fun categoryDao(): CategoryDao
 }

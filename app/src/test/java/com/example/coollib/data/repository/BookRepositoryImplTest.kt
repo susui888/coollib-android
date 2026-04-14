@@ -1,6 +1,7 @@
 package com.example.coollib.data.repository
 
 import com.example.coollib.data.local.BookDao
+import com.example.coollib.data.local.CategoryDao
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.data.mapper.toDto
 import com.example.coollib.data.mapper.toEntity
@@ -27,9 +28,11 @@ class BookRepositoryImplTest {
     private val api: BookApi = mockk()
     private val dao: BookDao = mockk()
 
+    private val categoryDao: CategoryDao = mockk()
+
     @Before
     fun setup() {
-        repository = BookRepositoryImpl(api, dao)
+        repository = BookRepositoryImpl(api, dao, categoryDao = categoryDao)
     }
 
     @Test
@@ -103,13 +106,24 @@ class BookRepositoryImplTest {
     }
 
     @Test
-    fun `getCategory returns mapped domain list`() = runTest {
-        coEvery { api.getCategory() } returns Response.success(MockCategory.list.map { it.toDto() })
+    fun `getCategory returns remote data when local is empty`() = runTest {
+        // 1. 模拟数据库为空：发射一个空列表
+        coEvery { categoryDao.getAllCategory() } returns flowOf(emptyList())
+
+        // 2. 模拟网络返回数据
+        val mockDtoList = MockCategory.list.map { it.toDto() }
+        coEvery { api.getCategory() } returns Response.success(mockDtoList)
+
+        // 3. 模拟存入数据库的操作（避免 verify 时报错）
+        coEvery { categoryDao.insertAll(any()) } returns Unit
 
         val result = repository.getCategory()
 
+        // 验证结果
         assertEquals(MockCategory.list.size, result.size)
-        assertEquals(MockCategory.list.first().name, result.first().name)
-        coVerify { api.getCategory() }
+        // 验证是否触发了网络请求
+        coVerify(exactly = 1) { api.getCategory() }
+        // 验证是否存入了数据库
+        coVerify { categoryDao.insertAll(any()) }
     }
 }

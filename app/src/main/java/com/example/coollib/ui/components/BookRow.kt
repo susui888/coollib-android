@@ -13,10 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
@@ -39,7 +42,12 @@ fun BookRow(
         ) {
 
             AsyncImage(
-                model = book.coverUrl,
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(book.coverUrl)
+                    .diskCacheKey(book.coverUrl)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .build(),
                 contentDescription = book.title,
                 modifier = Modifier
                     .size(60.dp, 90.dp)
