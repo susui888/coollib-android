@@ -67,7 +67,7 @@ fun BookScreenContent(
     onBookClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var listMode by remember { mutableStateOf(true) }
+    var listMode by remember { mutableStateOf(false) }
 
     Column(modifier = modifier.fillMaxSize()) {
 

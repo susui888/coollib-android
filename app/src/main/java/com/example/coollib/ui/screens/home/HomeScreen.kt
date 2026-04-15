@@ -36,6 +36,7 @@ import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.coollib.R
 import com.example.coollib.domain.model.Category
+import com.example.coollib.ui.components.BookCoverImage
 import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
@@ -170,20 +171,12 @@ fun CategoryItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(category.coverUrl)
-                    .diskCacheKey(category.coverUrl)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                placeholder = paintBookCover(category.id.toString(), category.name),
-                error = paintBookCover(category.id.toString(), category.name),
+            BookCoverImage(
+                url = category.coverUrl,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(240.dp),
-                contentScale = ContentScale.Crop,
-                contentDescription = category.name
+                cornerRadius = 0.dp,
             )
 
             Text(
@@ -238,20 +231,12 @@ fun BookItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(book.coverUrl)
-                    .diskCacheKey(book.coverUrl)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                placeholder = paintBookCover(book.title, book.author),
-                error = paintBookCover(book.title, book.author),
+            BookCoverImage(
+                url = book.coverUrl,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(2f / 3f),
-                contentScale = ContentScale.Crop,
-                contentDescription = book.title
+                    .height(190.dp),
+                cornerRadius = 0.dp,
             )
 
             Box(

@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +50,7 @@ import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Loan
 import com.example.coollib.domain.model.LoanStatus
+import com.example.coollib.ui.components.BookCoverImage
 import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockLoans
@@ -183,16 +185,11 @@ fun LoanItem(loan: Loan) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                AsyncImage(
-                    model = loan.book?.coverUrl,
-                    contentDescription = null,
+                 BookCoverImage(
+                    url = loan.book?.coverUrl,
                     modifier = Modifier
-                        .size(60.dp, 90.dp)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant),
-                    contentScale = ContentScale.Crop,
-                    placeholder = paintBookCover(loan.book?.title?:"", loan.book?.author?:""),
-                    error = paintBookCover(loan.book?.title?:"", loan.book?.author?:""),
+                        .width(60.dp)
+                        .height(90.dp)
                 )
 
                 Spacer(modifier = Modifier.width(16.dp))

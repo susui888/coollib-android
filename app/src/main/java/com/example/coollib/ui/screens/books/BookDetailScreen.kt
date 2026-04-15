@@ -2,8 +2,9 @@ package com.example.coollib.ui.screens.books
 
 import android.widget.Toast
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddShoppingCart
@@ -31,11 +34,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -44,10 +45,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
-import com.example.coollib.ui.components.paintBookCover
+import com.example.coollib.ui.components.BookCoverImage
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.screens.checkout.CartViewModel
 import com.example.coollib.ui.screens.checkout.WishlistViewModel
@@ -65,9 +65,12 @@ fun BookDetailScreen(
     onYearClick: (Int) -> Unit,
 ) {
     val selectedBook by bookViewModel.selectedBook.collectAsStateWithLifecycle()
-    val isInCart by cartViewModel.isBookInCart(bookId).collectAsStateWithLifecycle(initialValue = false)
-    val isFavorite by wishlistViewModel.isBookInWishlist(bookId).collectAsStateWithLifecycle(initialValue = false)
-    val isInWishlist by wishlistViewModel.isBookInWishlist(bookId).collectAsStateWithLifecycle(initialValue = false)
+    val isInCart by cartViewModel.isBookInCart(bookId)
+        .collectAsStateWithLifecycle(initialValue = false)
+    val isFavorite by wishlistViewModel.isBookInWishlist(bookId)
+        .collectAsStateWithLifecycle(initialValue = false)
+    val isInWishlist by wishlistViewModel.isBookInWishlist(bookId)
+        .collectAsStateWithLifecycle(initialValue = false)
 
     LaunchedEffect(bookId) {
         bookViewModel.selectBook(bookId)
@@ -83,7 +86,7 @@ fun BookDetailScreen(
                 cartViewModel.toggleCart(bookId, isInCart)
             },
             onToggleFavorite = {
-                wishlistViewModel.toggleWishlist(bookId,isInWishlist)
+                wishlistViewModel.toggleWishlist(bookId, isInWishlist)
             },
             onAuthorClick = onAuthorClick,
             onPublisherClick = onPublisherClick,
@@ -105,6 +108,19 @@ fun BookDetailScreenContent(
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState()
 ) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF8B4513).copy(alpha = 0.2f),
+                        Color.Transparent
+                    ),
+                )
+            )
+    )
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -113,29 +129,25 @@ fun BookDetailScreenContent(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(scrollState)
-                .padding(vertical = 24.dp)
+                .padding(vertical = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            AsyncImage(
-                model = book.coverUrl,
-                contentDescription = book.title,
+            BookCoverImage(
+                url = book.coverUrl,
                 modifier = Modifier
-                    .size(width = 180.dp, height = 270.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .padding(bottom = 8.dp)
-                    .shadow(8.dp)
-                    .border(1.dp, Color.LightGray)
-                    .clip(RectangleShape),
-                contentScale = ContentScale.FillBounds,
-                placeholder = paintBookCover(book.title, book.author),
-                error = paintBookCover(book.title, book.author)
+                    .width(200.dp)
+                    .height(300.dp)
+                    .shadow(elevation = 12.dp, shape = RoundedCornerShape(14.dp)),
             )
+
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 book.title,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp),
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
 
@@ -147,7 +159,8 @@ fun BookDetailScreenContent(
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
+                fontWeight = FontWeight.SemiBold,
             )
 
             Text(
@@ -158,7 +171,8 @@ fun BookDetailScreenContent(
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline
+                textDecoration = TextDecoration.Underline,
+                fontWeight = FontWeight.SemiBold,
             )
 
             Text(
@@ -168,7 +182,8 @@ fun BookDetailScreenContent(
                     .clickable { onYearClick(book.year) }
                     .padding(vertical = 4.dp, horizontal = 16.dp),
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.SemiBold,
             )
 
             val status = when (book.available) {
@@ -178,9 +193,11 @@ fun BookDetailScreenContent(
 
             Text(
                 text = stringResource(R.string.label_status, status),
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                modifier = Modifier.fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
                 color = if (book.available) Color.Green else Color.Red,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold,
             )
 
             Text(
@@ -190,7 +207,7 @@ fun BookDetailScreenContent(
                 ),
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Light,
             )
 
@@ -252,7 +269,7 @@ fun CartButton(
         enabled = available,
         modifier = modifier
             .fillMaxWidth()
-            .height(50.dp),
+            .height(40.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = contentColor,
@@ -300,7 +317,7 @@ fun FavoriteButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .height(50.dp),
+            .height(40.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor
         ),
@@ -341,7 +358,8 @@ fun BookDetailScreenPreview() {
             onToggleCart = {},
             onToggleFavorite = {},
             onAuthorClick = { author ->
-                Toast.makeText(context, author, Toast.LENGTH_LONG).show() },
+                Toast.makeText(context, author, Toast.LENGTH_LONG).show()
+            },
             onPublisherClick = {},
             onYearClick = {}
         )

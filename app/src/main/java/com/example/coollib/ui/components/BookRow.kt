@@ -41,21 +41,8 @@ fun BookRow(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(book.coverUrl)
-                    .diskCacheKey(book.coverUrl)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                contentDescription = book.title,
-                modifier = Modifier
-                    .size(60.dp, 90.dp)
-                    .border(1.dp, Color.LightGray),
-                contentScale = ContentScale.Crop,
-                placeholder = paintBookCover(book.title,book.author),
-                error = paintBookCover(book.title,book.author)
-            )
+
+            BookCoverImage(book.coverUrl, Modifier.size(60.dp, 90.dp))
 
             Column(
                 modifier = Modifier

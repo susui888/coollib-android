@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.abs
 
+val randomBookName = (1..10).map { ('a'..'z').random() }.joinToString("")
+
 @Composable
-fun paintBookCover(title: String, author: String): BookCoverPainter {
+fun paintBookCover(title: String = randomBookName, author: String = randomBookName): BookCoverPainter {
     val textMeasurer = rememberTextMeasurer()
     return remember(title, author, textMeasurer) {
         BookCoverPainter(title, author, textMeasurer)
