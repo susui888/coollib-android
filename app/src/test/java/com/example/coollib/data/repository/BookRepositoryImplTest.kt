@@ -9,8 +9,12 @@ import com.example.coollib.data.remote.BookApi
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockCategory
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.coVerifyOrder
+import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
@@ -95,14 +99,30 @@ class BookRepositoryImplTest {
     }
 
     @Test
-    fun `getNewestBooks returns mapped domain list`() = runTest {
-        coEvery { api.getNewestBooks() } returns Response.success(MockBooks.list.map { it.toEntity().toDto() })
+    fun `getNewestBooks returns mapped domain list when cache is empty`() = runTest {
+        // Arrange
+        // 注意：getCachedNewestBooks 返回 Flow，属于普通调用，用 every
+        every { dao.getCachedNewestBooks() } returns flowOf(emptyList())
 
+        // updateNewestCache 是 suspend，用 coEvery
+        coEvery { dao.updateNewestCache(any(), any()) } just Runs
+
+        val mockDtoList = MockBooks.list.map { it.toEntity().toDto() }
+        coEvery { api.getNewestBooks() } returns Response.success(mockDtoList)
+
+        // Act
         val result = repository.getNewestBooks()
 
+        // Assert
         assertEquals(MockBooks.list.size, result.size)
         assertEquals(MockBooks.list.first().title, result.first().title)
-        coVerify { api.getNewestBooks() }
+
+        // 验证交互顺序
+        coVerifyOrder {
+            dao.getCachedNewestBooks()
+            api.getNewestBooks()
+            dao.updateNewestCache(any(), any())
+        }
     }
 
     @Test

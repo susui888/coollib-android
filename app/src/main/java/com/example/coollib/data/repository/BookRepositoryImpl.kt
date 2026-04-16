@@ -2,6 +2,7 @@ package com.example.coollib.data.repository
 
 import com.example.coollib.data.local.BookDao
 import com.example.coollib.data.local.CategoryDao
+import com.example.coollib.data.local.NewestBookRef
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.data.mapper.toEntity
 import com.example.coollib.data.remote.BookApi
@@ -103,13 +104,32 @@ class BookRepositoryImpl @Inject constructor(
 
     override suspend fun getNewestBooks(): List<Book> =
         withContext(Dispatchers.IO) {
+            val cachedEntities = bookDao.getCachedNewestBooks().first()
+
+            if (cachedEntities.isNotEmpty()) {
+                return@withContext cachedEntities.map { it.toDomain() }
+            }
+
             val response = api.getNewestBooks()
 
             if (!response.isSuccessful) {
                 throw HttpException(response)
             }
 
-            response.body()?.map { it.toDomain() }.orEmpty()
+            val networkBooks = response.body().orEmpty()
+            val domainBooks = networkBooks.map { it.toDomain() }
+            val bookEntities = domainBooks.map { it.toEntity() }
+
+            val refs = domainBooks.mapIndexed { index, book ->
+                NewestBookRef(
+                    bookId = book.id,
+                    priority = index
+                )
+            }
+
+            bookDao.updateNewestCache(bookEntities, refs)
+
+            return@withContext domainBooks
         }
 
 }

@@ -10,6 +10,7 @@ import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Login
 import androidx.compose.material.icons.rounded.PersonAdd
 import androidx.compose.material.icons.rounded.QrCodeScanner
+import androidx.compose.material.icons.rounded.RoundaboutRight
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.ShoppingBasket
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -55,6 +56,8 @@ sealed class Screen(
     data object Register: Screen("register", 0, Icons.Rounded.PersonAdd)
     
     data object Scanner: Screen("scanner", 0, Icons.Rounded.QrCodeScanner)
+
+    data object About: Screen("about",0, Icons.Rounded.RoundaboutRight)
 }
 
 val screens = listOf(Screen.Home, Screen.Books, Screen.Cart, Screen.Statistics, Screen.Search)

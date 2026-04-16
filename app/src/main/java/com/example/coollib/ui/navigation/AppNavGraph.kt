@@ -1,7 +1,11 @@
 package com.example.coollib.ui.navigation
 
+import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,8 +17,10 @@ import com.example.coollib.ui.screens.scan.ScannerScreen
 import com.example.coollib.ui.screens.books.SearchScreen
 import com.example.coollib.ui.screens.checkout.CartScreen
 import com.example.coollib.ui.screens.home.HomeScreen
+import com.example.coollib.ui.screens.settings.AboutScreen
 import com.example.coollib.ui.screens.statistics.LoanScreen
 import com.example.coollib.ui.screens.statistics.StatisticsScreen
+import androidx.core.net.toUri
 
 
 @Composable
@@ -118,6 +124,26 @@ fun AppNavGraph(
                     }
                 },
                 onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(Screen.About.route){
+            val context = LocalContext.current
+
+            AboutScreen(
+                onNavigateBack = { navController.popBackStack()},
+                onUrlClick = { url ->
+                    try {
+                        val customTabsIntent = CustomTabsIntent.Builder()
+                            .setShareState(CustomTabsIntent.SHARE_STATE_ON)
+                            .setShowTitle(true)
+                            .build()
+                        customTabsIntent.launchUrl(context, url.toUri())
+                    } catch (e: Exception) {
+                        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                        context.startActivity(intent)
+                    }
+                }
             )
         }
     }

@@ -10,8 +10,9 @@ import androidx.room.RoomDatabase
         WishlistEntity::class,
         SearchHistoryEntity::class,
         CategoryEntity::class,
+        NewestBookRef::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

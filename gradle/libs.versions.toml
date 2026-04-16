@@ -1,13 +1,13 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.1"
 coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 lifecycleRuntimeKtx = "2.10.0"
 activityCompose = "1.13.0"
-kotlin = "2.3.10"
-composeBom = "2026.03.00"
+kotlin = "2.3.20"
+composeBom = "2026.03.01"
 coil = "2.7.0"
 navigation = "2.9.7"
 moshiKotlin = "1.15.2"
@@ -16,13 +16,14 @@ roomCompiler = "2.8.4"
 ksp = "2.3.6"
 hilt = "2.59.2"
 hiltNavigationCompose = "1.3.0"
-foundation = "1.10.5"
-ui = "1.10.5"
+foundation = "1.10.6"
+ui = "1.10.6"
 mockk = "1.14.9"
 coroutinesTest = "1.10.2"
 junitKtx = "1.3.0"
-camerax = "1.5.3"
+camerax = "1.6.0"
 mlkit-barcode-scanning = "17.3.0"
+browser = "1.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +69,7 @@ androidx-camera-mlkit-vision = { group = "androidx.camera", name = "camera-mlkit
 
 # ML Kit
 mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlkit-barcode-scanning" }
+androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "browser" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

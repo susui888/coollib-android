@@ -25,11 +25,20 @@ class BookViewModel @Inject constructor(
 
     fun searchBooks(query: SearchQuery) =
         viewModelScope.launch {
-            _books.value = bookUseCase.searchBooks(query)
-    }
+            try {
+                _books.value = bookUseCase.searchBooks(query)
+            } catch (e: Exception) {
+                _books.value = emptyList()
+            }
+        }
 
     fun selectBook(id: Int) =
         viewModelScope.launch {
-            _selectedBook.value = bookUseCase.getBookById(id)
+            try {
+                _selectedBook.value = bookUseCase.getBookById(id)
+            } catch (e: Exception) {
+                _selectedBook.value = null
+            }
         }
+
 }
