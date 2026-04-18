@@ -14,7 +14,7 @@ object MockCart {
             author = "Miguel de Cervantes",
             publisher = "Penguin Classics",
             year = 1605,
-            coverUrl = "${APIConfig.SERVER}/img/cover/9780142437230.webp"
+            coverUrl = "${APIConfig.IMG_BOOK_COVER}/9780142437230.webp"
         ),
 
         Cart(
@@ -24,7 +24,7 @@ object MockCart {
             author = "Stephen Hawking",
             publisher = "Bantam",
             year = 1988,
-            coverUrl = "${APIConfig.SERVER}/img/cover/9780553380163.webp"
+            coverUrl = "${APIConfig.IMG_BOOK_COVER}/9780553380163.webp"
         ),
 
         Cart(
@@ -34,7 +34,7 @@ object MockCart {
             author = "Robert C. Martin",
             publisher = "Prentice Hall",
             year = 2008,
-            coverUrl = "${APIConfig.SERVER}/img/cover/9780132350884.webp"
+            coverUrl = "${APIConfig.IMG_BOOK_COVER}/9780132350884.webp"
         ),
 
         Cart(
@@ -44,7 +44,7 @@ object MockCart {
             author = "Robert Jordan",
             publisher = "Tor Books",
             year = 1992,
-           coverUrl = "${APIConfig.SERVER}/img/cover/9780812513738.webp"
+           coverUrl = "${APIConfig.IMG_BOOK_COVER}/9780812513738.webp"
         ),
     )
 }

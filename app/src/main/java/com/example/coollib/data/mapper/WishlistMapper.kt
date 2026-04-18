@@ -11,6 +11,6 @@ fun WishlistEntity.toDomain() = Wishlist(
     this.author,
     this.publisher,
     this.year,
-    coverUrl = "${APIConfig.SERVER}/img/cover/$isbn.webp",
+    coverUrl = "${APIConfig.IMG_BOOK_COVER}/$isbn.webp",
 )
 

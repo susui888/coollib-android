@@ -10,7 +10,7 @@ fun CategoryDto.toDomain() = Category(
     this.id,
     this.name,
     this.description,
-    coverUrl = "${APIConfig.SERVER}/img/$id.webp",
+    coverUrl = "${APIConfig.IMG_CATEGORY}/$id.webp",
 )
 
 fun Category.toDto() = CategoryDto(
@@ -23,7 +23,7 @@ fun CategoryEntity.toDomain() = Category(
     this.id,
     this.name,
     this.description,
-    coverUrl = "${APIConfig.SERVER}/img/$id.webp",
+    coverUrl = "${APIConfig.IMG_CATEGORY}/$id.webp",
 )
 
 fun CategoryDto.toEntity() = CategoryEntity(

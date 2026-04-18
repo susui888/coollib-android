@@ -12,7 +12,7 @@ fun CartEntity.toDomain() = Cart(
     this.author,
     this.publisher,
     this.year,
-    coverUrl = "${APIConfig.SERVER}/img/cover/$isbn.webp",
+    coverUrl = "${APIConfig.IMG_BOOK_COVER}/$isbn.webp",
 )
 fun Cart.toDto() = CartDto(
     bookId = this.id,

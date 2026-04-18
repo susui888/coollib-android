@@ -17,7 +17,7 @@ fun BookDto.toDomain() = Book(
     this.year,
     this.available,
     this.description,
-    coverUrl = "${APIConfig.SERVER}/img/cover/$isbn.webp",
+    coverUrl = "${APIConfig.IMG_BOOK_COVER}/$isbn.webp",
 )
 
 fun BookDto.toEntity() = BookEntity(
@@ -39,7 +39,7 @@ fun BookEntity.toDomain() = Book(
     this.year,
     this.available,
     this.description,
-    coverUrl = "${APIConfig.SERVER}/img/cover/$isbn.webp",
+    coverUrl = "${APIConfig.IMG_BOOK_COVER}/$isbn.webp",
 )
 
 fun Book.toCartEntity() = CartEntity(
