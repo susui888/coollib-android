@@ -1,5 +1,7 @@
 # CoolLib Android
 
+[![Android CI/CD](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml/badge.svg)](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml)
+
 A modern, reactive library management application built with **Jetpack Compose**. Part of the CoolLib ecosystem.
 
 ## Ecosystem Links
