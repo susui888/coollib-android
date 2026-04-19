@@ -20,6 +20,7 @@ data class StatisticsState(
     val dueSoon: Int = 0,
     val overdue: Int = 0,
     val totalBorrowed: Int = 0,
+    val weeklyActivity: List<Float> = List(30) { 0f },
     val isLoading: Boolean = false,
     val isLoggedIn: Boolean = false
 )
@@ -49,7 +50,21 @@ class StatisticsViewModel @Inject constructor(
             try {
                 val loans = loanUseCase.getAllLoans()
                 val now = LocalDate.now()
-                
+
+
+                // 1. 获取过去 14 天的日期（2周）
+                val last14Days = (0..13).map { now.minusDays(it.toLong()) }.reversed()
+
+                // 2. 统计每天借阅数量
+                val dailyCounts = last14Days.map { date ->
+                    loans.count { it.borrowDate == date }.toFloat()
+                }
+
+                // 3. 归一化 (0.0 ~ 1.0)
+                val maxVal = dailyCounts.maxOrNull() ?: 1f
+                val normalizedActivity = dailyCounts.map { if (maxVal == 0f) 0f else it / maxVal }
+
+
                 _state.value = StatisticsState(
                     currentlyBorrowed = loans.count { it.status == LoanStatus.Borrowed },
                     dueSoon = loans.count { 
@@ -58,6 +73,7 @@ class StatisticsViewModel @Inject constructor(
                     },
                     overdue = loans.count { it.status == LoanStatus.Overdue },
                     totalBorrowed = loans.size,
+                    weeklyActivity = normalizedActivity,
                     isLoading = false,
                     isLoggedIn = true
                 )
