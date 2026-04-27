@@ -27,7 +27,8 @@ class BookDetailScreenTest {
                 onToggleFavorite = {},
                 onAuthorClick = {},
                 onPublisherClick = {},
-                onYearClick = {}
+                onYearClick = {},
+                onPostReview = {_ , _ -> },
             )
         }
 
@@ -51,7 +52,8 @@ class BookDetailScreenTest {
                 onToggleFavorite = {},
                 onAuthorClick = { clickedAuthor = it },
                 onPublisherClick = {},
-                onYearClick = {}
+                onYearClick = {},
+                onPostReview = { _, _ -> },
             )
         }
 
@@ -74,7 +76,8 @@ class BookDetailScreenTest {
                 onToggleFavorite = {},
                 onAuthorClick = {},
                 onPublisherClick = {},
-                onYearClick = {}
+                onYearClick = {},
+                onPostReview = { _, _ -> },
             )
         }
 
@@ -95,7 +98,8 @@ class BookDetailScreenTest {
                 onToggleFavorite = {},
                 onAuthorClick = {},
                 onPublisherClick = {},
-                onYearClick = {}
+                onYearClick = {},
+                onPostReview = { _, _ -> },
             )
         }
 

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.Instant
 import javax.inject.Inject
 
 @HiltViewModel
@@ -52,12 +53,22 @@ class BookViewModel @Inject constructor(
             _reviews.value = reviewUseCase.getReviewsByBook(bookId)
         }
 
-    fun addReview(review: Review) =
+    fun postReview(bookId: Int, rating: Int, content: String) {
         viewModelScope.launch {
-            val result = reviewUseCase.createReview(review)
+            val newReview = Review(
+                id = null,
+                bookId = bookId,
+                userId = 0,
+                rating = rating,
+                content = content,
+                createdAt = Instant.now()
+            )
+
+            val result = reviewUseCase.createReview(newReview)
             if (result != null) {
-                loadReviews(review.bookId)
+                loadReviews(bookId)
             }
         }
+    }
 
 }

@@ -49,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.Review
+import com.example.coollib.ui.components.AddReviewSection
 import com.example.coollib.ui.components.BookCoverImage
 import com.example.coollib.ui.components.BookReviewSection
 import com.example.coollib.ui.previewSupport.MockBooks
@@ -97,7 +98,10 @@ fun BookDetailScreen(
             },
             onAuthorClick = onAuthorClick,
             onPublisherClick = onPublisherClick,
-            onYearClick = onYearClick
+            onYearClick = onYearClick,
+            onPostReview = { rating, content ->
+                bookViewModel.postReview(book.id, rating, content)
+            },
         )
     }
 }
@@ -114,6 +118,7 @@ fun BookDetailScreenContent(
     onAuthorClick: (String) -> Unit,
     onPublisherClick: (String) -> Unit,
     onYearClick: (Int) -> Unit,
+    onPostReview: (Int, String) -> Unit,
     scrollState: ScrollState = rememberScrollState()
 ) {
     Box(
@@ -203,7 +208,7 @@ fun BookDetailScreenContent(
                 text = stringResource(R.string.label_status, status),
                 modifier = Modifier.fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
-                color = if (book.available) Color.Green else Color.Red,
+                color = if (book.available) Color(0xFF2E7D32) else Color.Red,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.SemiBold,
             )
@@ -219,6 +224,10 @@ fun BookDetailScreenContent(
                 fontWeight = FontWeight.Light,
             )
 
+
+            AddReviewSection(
+                onPostReview = onPostReview
+            )
 
             BookReviewSection(reviews = reviews)
 
@@ -372,7 +381,8 @@ fun BookDetailScreenPreview() {
                 Toast.makeText(context, author, Toast.LENGTH_LONG).show()
             },
             onPublisherClick = {},
-            onYearClick = {}
+            onYearClick = {},
+            onPostReview = { _, _ -> }
         )
     }
 }
@@ -390,7 +400,8 @@ fun BookDetailScreenPreview_NoInCart() {
             onToggleFavorite = {},
             onAuthorClick = {},
             onPublisherClick = {},
-            onYearClick = {}
+            onYearClick = {},
+            onPostReview = { _, _ -> }
         )
     }
 }
