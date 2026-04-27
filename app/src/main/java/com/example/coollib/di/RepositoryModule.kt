@@ -4,12 +4,14 @@ package com.example.coollib.di
 import com.example.coollib.data.repository.BookRepositoryImpl
 import com.example.coollib.data.repository.CartRepositoryImpl
 import com.example.coollib.data.repository.LoanRepositoryImpl
+import com.example.coollib.data.repository.ReviewRepositoryImpl
 import com.example.coollib.data.repository.SearchHistoryRepositoryImpl
 import com.example.coollib.data.repository.UserRepositoryImpl
 import com.example.coollib.data.repository.WishlistRepositoryImpl
 import com.example.coollib.domain.repository.BookRepository
 import com.example.coollib.domain.repository.CartRepository
 import com.example.coollib.domain.repository.LoanRepository
+import com.example.coollib.domain.repository.ReviewRepository
 import com.example.coollib.domain.repository.SearchHistoryRepository
 import com.example.coollib.domain.repository.UserRepository
 import com.example.coollib.domain.repository.WishlistRepository
@@ -51,4 +53,9 @@ abstract class RepositoryModule {
     abstract fun bingLoanRepository(
         impl: LoanRepositoryImpl
     ): LoanRepository
+
+    @Binds
+    abstract fun bingReviewRepository(
+        impl: ReviewRepositoryImpl
+    ): ReviewRepository
 }

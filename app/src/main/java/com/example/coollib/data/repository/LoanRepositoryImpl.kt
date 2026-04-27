@@ -18,7 +18,7 @@ private const val TAG = "LoanRepository"
 class LoanRepositoryImpl @Inject constructor(
     private val loanApi: LoanApi,
     private val bookRepository: BookRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : LoanRepository {
 
     override suspend fun getAllLoans(): List<Loan> = withContext(ioDispatcher) {

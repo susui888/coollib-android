@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,8 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -31,13 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.example.coollib.R
 import com.example.coollib.domain.model.Category
 import com.example.coollib.ui.components.BookCoverImage
-import com.example.coollib.ui.components.paintBookCover
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
@@ -45,7 +38,6 @@ import com.example.coollib.ui.previewSupport.MockCategory
 import com.example.coollib.ui.previewSupport.MockWishlist
 import com.example.coollib.ui.screens.checkout.WishlistViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
-import kotlin.text.Typography.section
 
 @Composable
 fun HomeScreen(
@@ -62,10 +54,10 @@ fun HomeScreen(
 
     HomeScreenContent(
         modifier = modifier,
-        categoryList = category,
+        categoryList = category.shuffled(),
         lastViewBooks = lastViewBooks.map { it.toUiModel() },
-        wishlist = wishlist.map { it.toUiModel() },
-        newestBooks = newestBooks.map { it.toUiModel() },
+        wishlist = wishlist.map { it.toUiModel() }.shuffled(),
+        newestBooks = newestBooks.map { it.toUiModel() }.shuffled(),
         onCategoryClick = onCategoryClick,
         onBookClick = onBookClick
     )
@@ -87,8 +79,8 @@ fun HomeScreenContent(
 ) {
 
     val sections = listOf(
-        HomeSection(R.string.recently_viewed, lastViewBooks),
         HomeSection(R.string.wishlist_label, wishlist),
+        HomeSection(R.string.recently_viewed, lastViewBooks),
         HomeSection(R.string.new_arrival, newestBooks)
     )
 

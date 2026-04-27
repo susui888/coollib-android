@@ -41,14 +41,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
+import com.example.coollib.domain.model.Review
 import com.example.coollib.ui.components.BookCoverImage
+import com.example.coollib.ui.components.BookReviewSection
 import com.example.coollib.ui.previewSupport.MockBooks
+import com.example.coollib.ui.previewSupport.MockReviews
 import com.example.coollib.ui.screens.checkout.CartViewModel
 import com.example.coollib.ui.screens.checkout.WishlistViewModel
 import com.example.coollib.ui.theme.CoolLibTheme
@@ -65,6 +69,8 @@ fun BookDetailScreen(
     onYearClick: (Int) -> Unit,
 ) {
     val selectedBook by bookViewModel.selectedBook.collectAsStateWithLifecycle()
+    val reviews by bookViewModel.reviews.collectAsStateWithLifecycle()
+
     val isInCart by cartViewModel.isBookInCart(bookId)
         .collectAsStateWithLifecycle(initialValue = false)
     val isFavorite by wishlistViewModel.isBookInWishlist(bookId)
@@ -79,6 +85,7 @@ fun BookDetailScreen(
     selectedBook?.let { book ->
         BookDetailScreenContent(
             modifier = modifier,
+            reviews = reviews,
             book = book,
             isInCart = isInCart,
             isFavorite = isFavorite,
@@ -97,7 +104,9 @@ fun BookDetailScreen(
 
 @Composable
 fun BookDetailScreenContent(
+    modifier: Modifier = Modifier,
     book: Book,
+    reviews: List<Review> = emptyList(),
     isInCart: Boolean,
     isFavorite: Boolean,
     onToggleCart: () -> Unit,
@@ -105,7 +114,6 @@ fun BookDetailScreenContent(
     onAuthorClick: (String) -> Unit,
     onPublisherClick: (String) -> Unit,
     onYearClick: (Int) -> Unit,
-    modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState()
 ) {
     Box(
@@ -211,6 +219,9 @@ fun BookDetailScreenContent(
                 fontWeight = FontWeight.Light,
             )
 
+
+            BookReviewSection(reviews = reviews)
+
             Spacer(modifier = Modifier.height(32.dp))
         }
 
@@ -229,7 +240,6 @@ fun BookDetailScreenContent(
                     .weight(1f)
                     .padding(bottom = 12.dp)
             )
-
 
             Spacer(Modifier.size(12.dp))
 
@@ -346,13 +356,14 @@ fun FavoriteButton(
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = Devices.PIXEL_9,showSystemUi = true)
 @Composable
 fun BookDetailScreenPreview() {
     CoolLibTheme {
         val context = LocalContext.current
         BookDetailScreenContent(
             book = MockBooks.list.first(),
+            reviews = MockReviews.list,
             isInCart = true,
             isFavorite = true,
             onToggleCart = {},
@@ -366,12 +377,13 @@ fun BookDetailScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = Devices.PIXEL_9,showSystemUi = true)
 @Composable
 fun BookDetailScreenPreview_NoInCart() {
     CoolLibTheme {
         BookDetailScreenContent(
-            book = MockBooks.list.first(),
+            book = MockBooks.list.last(),
+            reviews = MockReviews.list,
             isInCart = false,
             isFavorite = true,
             onToggleCart = {},

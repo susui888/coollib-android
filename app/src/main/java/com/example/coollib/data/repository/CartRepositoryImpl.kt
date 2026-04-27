@@ -19,7 +19,7 @@ import kotlinx.coroutines.withContext
 class CartRepositoryImpl @Inject constructor(
     private val cartApi: CartApi,
     private val cartDao: CartDao,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : CartRepository {
 
     override fun allCartItems(): Flow<List<Cart>> =

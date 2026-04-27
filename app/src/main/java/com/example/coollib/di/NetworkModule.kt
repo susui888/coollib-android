@@ -6,8 +6,10 @@ import com.example.coollib.data.remote.APIConfig
 import com.example.coollib.data.remote.AuthInterceptor
 import com.example.coollib.data.remote.BookApi
 import com.example.coollib.data.remote.CartApi
+import com.example.coollib.data.remote.InstantAdapter
 import com.example.coollib.data.remote.LoanApi
 import com.example.coollib.data.remote.LocalDateAdapter
+import com.example.coollib.data.remote.ReviewApi
 import com.example.coollib.data.remote.UserApi
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -57,6 +59,7 @@ object NetworkModule {
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
             .add(LocalDateAdapter())
+            .add(InstantAdapter())      // Add the InstantAdapter for review
             .addLast(KotlinJsonAdapterFactory())
             .build()
     }
@@ -104,5 +107,12 @@ object NetworkModule {
         retrofit: Retrofit
     ): LoanApi {
         return retrofit.create(LoanApi::class.java)
+    }
+
+    @Provides
+    fun provideReviewApi(
+        retrofit: Retrofit
+    ): ReviewApi {
+        return retrofit.create(ReviewApi::class.java)
     }
 }

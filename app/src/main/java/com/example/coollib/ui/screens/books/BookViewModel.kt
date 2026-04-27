@@ -3,8 +3,10 @@ package com.example.coollib.ui.screens.books
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coollib.domain.model.Book
+import com.example.coollib.domain.model.Review
 import com.example.coollib.domain.model.SearchQuery
 import com.example.coollib.domain.usecase.BookUseCase
+import com.example.coollib.domain.usecase.ReviewUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class BookViewModel @Inject constructor(
-    private val bookUseCase: BookUseCase
+    private val bookUseCase: BookUseCase,
+    private val reviewUseCase: ReviewUseCase,
 ) : ViewModel() {
 
     private val _books = MutableStateFlow<List<Book>>(emptyList())
@@ -22,6 +25,8 @@ class BookViewModel @Inject constructor(
     private val _selectedBook = MutableStateFlow<Book?>(null)
     val selectedBook: StateFlow<Book?> = _selectedBook.asStateFlow()
 
+    private val _reviews = MutableStateFlow<List<Review>>(emptyList())
+    val reviews: StateFlow<List<Review>> = _reviews.asStateFlow()
 
     fun searchBooks(query: SearchQuery) =
         viewModelScope.launch {
@@ -36,8 +41,22 @@ class BookViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _selectedBook.value = bookUseCase.getBookById(id)
+                loadReviews(id)
             } catch (e: Exception) {
                 _selectedBook.value = null
+            }
+        }
+
+    private fun loadReviews(bookId: Int) =
+        viewModelScope.launch {
+            _reviews.value = reviewUseCase.getReviewsByBook(bookId)
+        }
+
+    fun addReview(review: Review) =
+        viewModelScope.launch {
+            val result = reviewUseCase.createReview(review)
+            if (result != null) {
+                loadReviews(review.bookId)
             }
         }
 
