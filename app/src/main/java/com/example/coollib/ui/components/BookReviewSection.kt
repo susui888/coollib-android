@@ -1,6 +1,7 @@
 package com.example.coollib.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,16 +14,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.DividerDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -54,13 +63,13 @@ fun AddReviewSection(
 
     Spacer(modifier = Modifier.height(32.dp))
 
-    Card(
+    OutlinedCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.medium
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = Color.Transparent
+        ),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
@@ -70,23 +79,34 @@ fun AddReviewSection(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            Row(modifier = Modifier.padding(vertical = 4.dp)) {
+            Row(
+                modifier = Modifier.padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.Start
+            ) {
                 (1..5).forEach { index ->
+                    val isSelected = index <= rating
+
                     IconButton(
                         onClick = { rating = index },
                         modifier = Modifier.size(40.dp)
                     ) {
-                        Text(
-                            text = if (index <= rating) "★" else "☆",
-                            color = Color(0xFFFFC107),
-                            style = MaterialTheme.typography.headlineSmall
+                        Icon(
+                            imageVector = if (isSelected) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                            contentDescription = "Rate $index stars",
+
+                            tint = if (isSelected) {
+                                Color(0xFFFFA000)
+                            } else {
+                                MaterialTheme.colorScheme.outline.copy(alpha = 0.5f)
+                            },
+                            modifier = Modifier.size(24.dp)
                         )
                     }
                 }
             }
 
 
-            OutlinedTextField(
+            TextField(
                 value = content,
                 onValueChange = { content = it },
                 modifier = Modifier.fillMaxWidth(),
@@ -98,10 +118,9 @@ fun AddReviewSection(
                 },
                 textStyle = MaterialTheme.typography.bodyMedium,
                 maxLines = 4,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(8.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f),
-                    focusedContainerColor = Color.Transparent
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             )
 
@@ -162,9 +181,12 @@ fun BookReviewSection(
             }
 
             if (reviewCount > 0) {
-                Surface(
-                    color = MaterialTheme.colorScheme.primaryContainer,
-                    shape = RoundedCornerShape(12.dp)
+                Card(
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                    ),
+                    shape = RoundedCornerShape(8.dp)
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -177,10 +199,12 @@ fun BookReviewSection(
                             color = MaterialTheme.colorScheme.onPrimaryContainer
                         )
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(
-                            text = "★",
-                            color = Color(0xFFFFB300),
-                            style = MaterialTheme.typography.titleLarge
+
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = null,
+                            tint = Color(0xFFFFA000),
+                            modifier = Modifier.size(26.dp)
                         )
                     }
                 }
@@ -210,13 +234,13 @@ fun ReviewItem(
     modifier: Modifier = Modifier,
     review: Review,
 ) {
-    Card(
+    OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = MaterialTheme.shapes.medium
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = Color.Transparent
+        ),
     ) {
         Column(
             modifier = Modifier
@@ -284,18 +308,30 @@ fun ReviewItem(
             }
 
             // --- 底部区域：评分星星 ---
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = "★ ".repeat(review.rating),
-                    color = Color(0xFFFFC107),
-                    style = MaterialTheme.typography.titleMedium
-                )
-                Text(
-                    text = "☆ ".repeat(5 - review.rating),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
-                    style = MaterialTheme.typography.titleMedium
-                )
+            Spacer(modifier = Modifier.height(6.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+
+                repeat(review.rating) {
+                    Icon(
+                        imageVector = Icons.Filled.Star,
+                        contentDescription = null,
+                        tint = Color(0xFFFFA000),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                repeat(5 - review.rating) {
+                    Icon(
+                        imageVector = Icons.Outlined.StarBorder,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f),
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
             }
         }
     }
