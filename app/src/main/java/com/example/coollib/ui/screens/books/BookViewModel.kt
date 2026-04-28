@@ -59,6 +59,7 @@ class BookViewModel @Inject constructor(
                 id = null,
                 bookId = bookId,
                 userId = 0,
+                userName = "",
                 rating = rating,
                 content = content,
                 createdAt = Instant.now()

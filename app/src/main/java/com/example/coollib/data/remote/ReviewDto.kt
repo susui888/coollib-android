@@ -15,6 +15,9 @@ open class ReviewDto(
     @property:Json(name = "userId")
     open val userId: Int,
 
+    @property:Json(name = "userName")
+    open val userName: String,
+
     @property:Json(name = "rating")
     open val rating: Short,
 

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -30,10 +31,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImagePainter
+import coil.compose.SubcomposeAsyncImage
+import coil.compose.SubcomposeAsyncImageContent
+import com.example.coollib.data.remote.APIConfig
 import com.example.coollib.domain.model.Review
 import com.example.coollib.ui.previewSupport.MockReviews
 import com.example.coollib.ui.theme.CoolLibTheme
@@ -240,18 +247,46 @@ fun ReviewItem(
                 modifier = Modifier.fillMaxWidth()
             ) {
 
-                Box(
+//                Box(
+//                    modifier = Modifier
+//                        .size(36.dp)
+//                        .background(rememberAvatarColor(review.userId), CircleShape),
+//                    contentAlignment = Alignment.Center
+//                ) {
+//                    Text(
+//                        text = "U",
+//                        style = MaterialTheme.typography.titleSmall,
+//                        color = Color.White,
+//                        fontWeight = FontWeight.Bold
+//                    )
+//                }
+
+                SubcomposeAsyncImage(
+                    model = "${APIConfig.IMG_USER}/${review.userId}.png",
+                    contentDescription = "User Avatar",
                     modifier = Modifier
-                        .size(36.dp)
-                        .background(rememberAvatarColor(review.userId), CircleShape),
-                    contentAlignment = Alignment.Center
+                        .size(50.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop
                 ) {
-                    Text(
-                        text = "U",
-                        style = MaterialTheme.typography.titleSmall,
-                        color = Color.White,
-                        fontWeight = FontWeight.Bold
-                    )
+                    val state = painter.state
+                    if (state is AsyncImagePainter.State.Error || state is AsyncImagePainter.State.Loading) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(rememberAvatarColor(review.userId), CircleShape),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = review.userName.take(1).uppercase(),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    } else {
+                        SubcomposeAsyncImageContent()
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -259,8 +294,8 @@ fun ReviewItem(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Reader ${review.userId}",
-                        style = MaterialTheme.typography.titleSmall,
+                        text = review.userName,
+                        style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
                     )
