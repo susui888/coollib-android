@@ -33,13 +33,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
+import coil.compose.AsyncImage
 import com.example.coollib.data.remote.APIConfig
 import com.example.coollib.domain.model.Review
 import com.example.coollib.ui.previewSupport.MockReviews
@@ -206,24 +205,6 @@ fun BookReviewSection(
     }
 }
 
-/**
- * 根据 UserId 生成一个生动的颜色
- */
-@Composable
-private fun rememberAvatarColor(userId: Int): Color {
-    val colors = listOf(
-        Color(0xFFEF5350), // Red
-        Color(0xFFEC407A), // Pink
-        Color(0xFFAB47BC), // Purple
-        Color(0xFF7E57C2), // Deep Purple
-        Color(0xFF42A5F5), // Blue
-        Color(0xFF26A69A), // Teal
-        Color(0xFF9CCC65), // Light Green
-        Color(0xFFFFCA28)  // Amber
-    )
-    return colors[userId % colors.size]
-}
-
 @Composable
 fun ReviewItem(
     modifier: Modifier = Modifier,
@@ -246,32 +227,31 @@ fun ReviewItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                SubcomposeAsyncImage(
-                    model = "${APIConfig.IMG_USER}/${review.userId}.png",
-                    contentDescription = "User Avatar",
+
+                Box(
                     modifier = Modifier
                         .size(50.dp)
                         .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                    contentAlignment = Alignment.Center
                 ) {
-                    val state = painter.state
-                    if (state is AsyncImagePainter.State.Error || state is AsyncImagePainter.State.Loading) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(rememberAvatarColor(review.userId), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = review.userName.take(1).uppercase(),
-                                style = MaterialTheme.typography.titleSmall,
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
-                    } else {
-                        SubcomposeAsyncImageContent()
-                    }
+                    Text(
+                        text = review.userName.take(1).uppercase(),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    AsyncImage(
+                        model = "${APIConfig.IMG_USER}/${review.userId}.png",
+                        contentDescription = "User Avatar",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .graphicsLayer(
+                                scaleX = 1.3f,
+                                scaleY = 1.3f
+                            ),
+                        contentScale = ContentScale.Crop
+                    )
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
