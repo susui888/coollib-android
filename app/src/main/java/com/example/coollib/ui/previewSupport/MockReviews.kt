@@ -8,7 +8,7 @@ object MockReviews {
     val list = listOf(
         Review(
             id = 1,
-            bookId = 274, // Don Quixote
+            bookId = 253, // Don Quixote
             userId = 101,
             userName = "Susui",
             rating = 5,
@@ -17,18 +17,18 @@ object MockReviews {
         ),
         Review(
             id = 2,
-            bookId = 274,
+            bookId = 263,
             userId = 102,
-            userName = "Susui",
+            userName = "cake",
             rating = 4,
             content = "Very long but definitely worth the read. The translation in this edition is excellent.",
             createdAt = Instant.parse("2026-02-20T14:20:00Z")
         ),
         Review(
             id = 3,
-            bookId = 270, // Clean Code
+            bookId = 264, // Clean Code
             userId = 103,
-            userName = "Susui",
+            userName = "ryan",
             rating = 5,
             content = "Essential reading for every software engineer. It changed the way I think about variables and functions.",
             createdAt = Instant.parse("2026-03-05T09:00:00Z")

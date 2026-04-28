@@ -246,21 +246,6 @@ fun ReviewItem(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-
-//                Box(
-//                    modifier = Modifier
-//                        .size(36.dp)
-//                        .background(rememberAvatarColor(review.userId), CircleShape),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    Text(
-//                        text = "U",
-//                        style = MaterialTheme.typography.titleSmall,
-//                        color = Color.White,
-//                        fontWeight = FontWeight.Bold
-//                    )
-//                }
-
                 SubcomposeAsyncImage(
                     model = "${APIConfig.IMG_USER}/${review.userId}.png",
                     contentDescription = "User Avatar",
