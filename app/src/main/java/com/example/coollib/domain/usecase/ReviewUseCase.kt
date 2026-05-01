@@ -1,5 +1,6 @@
 package com.example.coollib.domain.usecase
 
+import android.net.Uri
 import com.example.coollib.domain.model.Review
 import com.example.coollib.domain.repository.ReviewRepository
 import javax.inject.Inject
@@ -16,4 +17,7 @@ class ReviewUseCase @Inject constructor(
         return repository.createReview(review)
     }
 
+    suspend fun uploadImages(uris: List<Uri>): List<String> {
+        return repository.uploadReviewImages(uris)
+    }
 }

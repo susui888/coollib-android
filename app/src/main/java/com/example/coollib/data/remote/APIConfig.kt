@@ -8,4 +8,6 @@ object APIConfig {
     const val IMG_CATEGORY = "${IMG_SERVER}/category"
 
     const val IMG_USER = "${IMG_SERVER}/userimg"
+
+    const val IMG_REVIEW = "https://review.ryansu.uk"
 }

@@ -25,5 +25,8 @@ open class ReviewDto(
     open val content: String? = null,
 
     @property:Json(name = "createdAt")
-    open val createdAt: Instant
+    open val createdAt: Instant,
+
+    @property:Json(name = "imageUrls")
+    open val imageUrls: List<String> = emptyList()
 )

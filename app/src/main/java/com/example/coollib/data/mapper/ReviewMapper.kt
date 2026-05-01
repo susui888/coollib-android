@@ -10,7 +10,8 @@ fun ReviewDto.toDomain() = Review(
     userName = this.userName,
     rating = this.rating.toInt(),
     content = this.content ?: "",
-    createdAt = this.createdAt
+    createdAt = this.createdAt,
+    imageUrls = this.imageUrls
 )
 
 fun Review.toDto() = ReviewDto(
@@ -20,5 +21,6 @@ fun Review.toDto() = ReviewDto(
     userName = this.userName,
     rating = this.rating.toShort(),
     content = this.content.ifEmpty { null },
-    createdAt = this.createdAt
+    createdAt = this.createdAt,
+    imageUrls = this.imageUrls
 )

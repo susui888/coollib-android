@@ -1,5 +1,7 @@
 package com.example.coollib.ui.screens.books
 
+import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coollib.domain.model.Book
@@ -53,8 +55,14 @@ class BookViewModel @Inject constructor(
             _reviews.value = reviewUseCase.getReviewsByBook(bookId)
         }
 
-    fun postReview(bookId: Int, rating: Int, content: String) {
+    fun postReview(bookId: Int, rating: Int, content: String, imageUris: List<Uri>) {
         viewModelScope.launch {
+            val imageUrls = if (imageUris.isNotEmpty()) {
+                reviewUseCase.uploadImages(imageUris)
+            } else {
+                emptyList()
+            }
+
             val newReview = Review(
                 id = null,
                 bookId = bookId,
@@ -62,7 +70,8 @@ class BookViewModel @Inject constructor(
                 userName = "",
                 rating = rating,
                 content = content,
-                createdAt = Instant.now()
+                createdAt = Instant.now(),
+                imageUrls = imageUrls
             )
 
             val result = reviewUseCase.createReview(newReview)

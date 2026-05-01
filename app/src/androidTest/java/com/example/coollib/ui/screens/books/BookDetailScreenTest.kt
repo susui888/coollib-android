@@ -30,7 +30,7 @@ class BookDetailScreenTest {
                 onAuthorClick = {},
                 onPublisherClick = {},
                 onYearClick = {},
-                onPostReview = {_ , _ -> },
+                onPostReview = {_ , _,_ -> },
             )
         }
 
@@ -55,7 +55,7 @@ class BookDetailScreenTest {
                 onAuthorClick = { clickedAuthor = it },
                 onPublisherClick = {},
                 onYearClick = {},
-                onPostReview = { _, _ -> },
+                onPostReview = { _, _,_ -> },
             )
         }
 
@@ -79,7 +79,7 @@ class BookDetailScreenTest {
                 onAuthorClick = {},
                 onPublisherClick = {},
                 onYearClick = {},
-                onPostReview = { _, _ -> },
+                onPostReview = { _, _,_ -> },
             )
         }
 
@@ -101,7 +101,7 @@ class BookDetailScreenTest {
                 onAuthorClick = {},
                 onPublisherClick = {},
                 onYearClick = {},
-                onPostReview = { _, _ -> },
+                onPostReview = { _, _,_ -> },
             )
         }
 
@@ -127,7 +127,7 @@ class BookDetailScreenTest {
                 onAuthorClick = {},
                 onPublisherClick = {},
                 onYearClick = {},
-                onPostReview = { _, _ -> },
+                onPostReview = { _, _,_ -> },
             )
         }
 
@@ -158,7 +158,7 @@ class BookDetailScreenTest {
                 onAuthorClick = {},
                 onPublisherClick = {},
                 onYearClick = {},
-                onPostReview = { _, _ -> },
+                onPostReview = { _, _,_ -> },
             )
         }
 

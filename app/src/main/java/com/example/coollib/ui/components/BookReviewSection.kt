@@ -1,9 +1,13 @@
 package com.example.coollib.ui.components
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,19 +16,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddPhotoAlternate
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.DividerDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -53,13 +55,20 @@ import com.example.coollib.domain.model.Review
 import com.example.coollib.ui.previewSupport.MockReviews
 import com.example.coollib.ui.theme.CoolLibTheme
 import com.example.coollib.ui.util.toReadableDate
+import androidx.compose.foundation.lazy.items
 
 @Composable
 fun AddReviewSection(
-    onPostReview: (Int, String) -> Unit
+    onPostReview: (Int, String, List<Uri>) -> Unit
 ) {
     var rating by remember { mutableIntStateOf(5) }
     var content by remember { mutableStateOf("") }
+
+    var selectedImages by remember { mutableStateOf<List<Uri>>(emptyList()) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetMultipleContents()
+    ) { uris -> selectedImages = selectedImages + uris }
+
 
     Spacer(modifier = Modifier.height(32.dp))
 
@@ -124,21 +133,40 @@ fun AddReviewSection(
                 )
             )
 
+            ImageAttachmentRow(
+                images = selectedImages,
+                onRemoveImage = { uri -> selectedImages = selectedImages - uri }
+            )
+
             Spacer(modifier = Modifier.height(12.dp))
 
-            Button(
-                onClick = {
-                    if (content.isNotBlank()) {
-                        onPostReview(rating, content)
-                        content = ""
-                    }
-                },
-                modifier = Modifier.align(Alignment.End),
-                enabled = content.isNotBlank(),
-                shape = RoundedCornerShape(8.dp),
-                elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Post Review")
+
+                IconButton(onClick = { launcher.launch("image/*") }) {
+                    Icon(
+                        imageVector = Icons.Default.AddPhotoAlternate,
+                        contentDescription = "Add photos",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        if (content.isNotBlank()) {
+                            onPostReview(rating, content, selectedImages)
+                            content = ""
+                            selectedImages = emptyList()
+                        }
+                    },
+                    enabled = content.isNotBlank(),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Post Review")
+                }
             }
         }
     }
@@ -295,19 +323,6 @@ fun ReviewItem(
                     )
                 }
             }
-
-            // --- 中部区域：评论内容 ---
-            if (review.content.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(12.dp))
-                Text(
-                    text = review.content,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2f
-                )
-            }
-
-            // --- 底部区域：评分星星 ---
             Spacer(modifier = Modifier.height(6.dp))
 
             Row(
@@ -333,6 +348,36 @@ fun ReviewItem(
                     )
                 }
             }
+
+            if (review.content.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(
+                    text = review.content,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.2f
+                )
+            }
+
+            if (review.imageUrls.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(12.dp))
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(end = 16.dp)
+                ) {
+                    items(review.imageUrls) { imageUrl ->
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Review Image",
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.surfaceVariant),
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -348,8 +393,8 @@ fun AddReviewSectionPreview() {
                 .padding(8.dp)
         ) {
             AddReviewSection(
-                onPostReview = { rating, content ->
-                    println("Post review: $rating stars, content: $content")
+                onPostReview = { rating, content, images ->
+                    println("Post review: $rating stars, content: $content, images count: ${images.size}")
                 }
             )
         }

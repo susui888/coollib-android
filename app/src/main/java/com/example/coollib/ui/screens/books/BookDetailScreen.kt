@@ -1,5 +1,6 @@
 package com.example.coollib.ui.screens.books
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -99,8 +100,8 @@ fun BookDetailScreen(
             onAuthorClick = onAuthorClick,
             onPublisherClick = onPublisherClick,
             onYearClick = onYearClick,
-            onPostReview = { rating, content ->
-                bookViewModel.postReview(book.id, rating, content)
+            onPostReview = { rating, content, uris ->
+                bookViewModel.postReview(book.id, rating, content, uris)
             },
         )
     }
@@ -118,7 +119,7 @@ fun BookDetailScreenContent(
     onAuthorClick: (String) -> Unit,
     onPublisherClick: (String) -> Unit,
     onYearClick: (Int) -> Unit,
-    onPostReview: (Int, String) -> Unit,
+    onPostReview: (Int, String, List<Uri>) -> Unit,
     scrollState: ScrollState = rememberScrollState()
 ) {
     Box(
@@ -382,7 +383,7 @@ fun BookDetailScreenPreview() {
             },
             onPublisherClick = {},
             onYearClick = {},
-            onPostReview = { _, _ -> }
+            onPostReview = { _, _, _ -> }
         )
     }
 }
@@ -401,7 +402,7 @@ fun BookDetailScreenPreview_NoInCart() {
             onAuthorClick = {},
             onPublisherClick = {},
             onYearClick = {},
-            onPostReview = { _, _ -> }
+            onPostReview = { _, _,_ -> }
         )
     }
 }
