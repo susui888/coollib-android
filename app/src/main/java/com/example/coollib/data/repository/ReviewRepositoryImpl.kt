@@ -1,9 +1,10 @@
 package com.example.coollib.data.repository
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.Log
-import android.webkit.MimeTypeMap
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.data.mapper.toDto
 import com.example.coollib.data.remote.APIConfig
@@ -17,9 +18,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.time.Instant
-import java.time.ZoneOffset
-import java.time.format.DateTimeFormatter
+import java.io.ByteArrayOutputStream
 
 private const val TAG = "ReviewRepository"
 
@@ -62,24 +61,21 @@ class ReviewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun uploadReviewImages(uris: List<Uri>): List<String> = withContext(ioDispatcher) {
-        val fileNames = uris.map { it.getFileName(context) }
+        val fileNames = uris.mapIndexed { index, _ -> "review-$index.webp" }
+
         val response = reviewApi.getReviewImageUploadUrls(fileNames)
         if (!response.isSuccessful) return@withContext emptyList()
 
         val uploadInfos = response.body() ?: return@withContext emptyList()
 
-
         uploadInfos.mapIndexed { index, info ->
             try {
                 val uri = uris[index]
-                val rawMimeType = context.contentResolver.getType(uri) ?: "image/jpeg"
-                val pureMimeType = rawMimeType.split(";")[0].lowercase()
 
-                val inputStream = context.contentResolver.openInputStream(uri)
-                val bytes = inputStream?.use { it.readBytes() } ?: return@mapIndexed ""
+                val processedBytes = processImageToWebP(uri) ?: return@mapIndexed ""
 
-                val mediaType = pureMimeType.toMediaTypeOrNull()
-                val requestBody = bytes.toRequestBody(mediaType)
+                val mediaType = "image/webp".toMediaTypeOrNull()
+                val requestBody = processedBytes.toRequestBody(mediaType)
 
                 val uploadResponse = reviewApi.uploadImageToS3(info.uploadUrl, requestBody)
 
@@ -96,11 +92,35 @@ class ReviewRepositoryImpl @Inject constructor(
             }
         }.filter { it.isNotEmpty() }
     }
-}
 
-fun Uri.getFileName(context: Context): String {
-    val contentResolver = context.contentResolver
-    val type = contentResolver.getType(this)
-    val extension = MimeTypeMap.getSingleton().getExtensionFromMimeType(type)
-    return "review_${System.currentTimeMillis()}.${extension ?: "jpg"}"
+    private fun processImageToWebP(uri: Uri): ByteArray? {
+        return try {
+            val source = ImageDecoder.createSource(context.contentResolver, uri)
+
+            val bitmap = ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+
+                val maxWidth = 1024
+                if (info.size.width > maxWidth) {
+                    val ratio = maxWidth.toFloat() / info.size.width
+                    val targetHeight = (info.size.height * ratio).toInt()
+                    decoder.setTargetSize(maxWidth, targetHeight)
+                }
+
+                decoder.allocator = ImageDecoder.ALLOCATOR_SOFTWARE
+            }
+
+            val outputStream = ByteArrayOutputStream()
+
+            bitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, 75, outputStream)
+
+            val result = outputStream.toByteArray()
+
+            if (!bitmap.isRecycled) bitmap.recycle()
+
+            result
+        } catch (e: Exception) {
+            Log.e(TAG, "processImageToWebP failed", e)
+            null
+        }
+    }
 }

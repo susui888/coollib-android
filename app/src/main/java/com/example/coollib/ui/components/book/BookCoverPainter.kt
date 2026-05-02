@@ -1,4 +1,4 @@
-package com.example.coollib.ui.components
+package com.example.coollib.ui.components.book
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

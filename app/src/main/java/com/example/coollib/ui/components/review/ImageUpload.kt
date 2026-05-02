@@ -1,4 +1,4 @@
-package com.example.coollib.ui.components
+package com.example.coollib.ui.components.review
 
 import android.net.Uri
 import androidx.compose.foundation.clickable

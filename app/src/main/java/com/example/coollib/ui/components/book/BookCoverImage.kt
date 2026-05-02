@@ -1,4 +1,4 @@
-package com.example.coollib.ui.components
+package com.example.coollib.ui.components.book
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

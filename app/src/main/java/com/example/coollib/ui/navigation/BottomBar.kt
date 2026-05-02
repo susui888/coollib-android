@@ -1,4 +1,4 @@
-package com.example.coollib.ui.components
+package com.example.coollib.ui.navigation
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Badge
@@ -15,8 +15,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.coollib.ui.navigation.Screen
-import com.example.coollib.ui.navigation.screens
 
 @Composable
 fun BottomBar(

@@ -1,4 +1,4 @@
-package com.example.coollib.ui.components
+package com.example.coollib.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -54,7 +54,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.coollib.R
-import com.example.coollib.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)

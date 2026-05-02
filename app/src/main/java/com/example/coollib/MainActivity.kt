@@ -20,8 +20,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import com.example.coollib.data.local.SessionManager
-import com.example.coollib.ui.components.BottomBar
-import com.example.coollib.ui.components.TopBar
+import com.example.coollib.ui.navigation.BottomBar
+import com.example.coollib.ui.navigation.TopBar
 import com.example.coollib.ui.navigation.AppNavGraph
 import com.example.coollib.ui.navigation.Screen
 import com.example.coollib.ui.screens.checkout.CartViewModel

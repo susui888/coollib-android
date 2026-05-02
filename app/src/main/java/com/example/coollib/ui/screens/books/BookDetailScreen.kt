@@ -50,9 +50,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.Review
-import com.example.coollib.ui.components.AddReviewSection
-import com.example.coollib.ui.components.BookCoverImage
-import com.example.coollib.ui.components.BookReviewSection
+import com.example.coollib.ui.components.review.AddReviewSection
+import com.example.coollib.ui.components.book.BookCoverImage
+import com.example.coollib.ui.components.review.BookReviewSection
 import com.example.coollib.ui.previewSupport.MockBooks
 import com.example.coollib.ui.previewSupport.MockReviews
 import com.example.coollib.ui.screens.checkout.CartViewModel

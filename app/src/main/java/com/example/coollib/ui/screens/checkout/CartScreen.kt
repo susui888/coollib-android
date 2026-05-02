@@ -39,7 +39,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.traceEventEnd
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,7 +53,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Cart
 import com.example.coollib.domain.model.Wishlist
-import com.example.coollib.ui.components.BookRow
+import com.example.coollib.ui.components.book.BookRow
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockCart
 import com.example.coollib.ui.previewSupport.MockWishlist

@@ -30,7 +30,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Category
-import com.example.coollib.ui.components.BookCoverImage
+import com.example.coollib.ui.components.book.BookCoverImage
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
 import com.example.coollib.ui.previewSupport.MockBooks
