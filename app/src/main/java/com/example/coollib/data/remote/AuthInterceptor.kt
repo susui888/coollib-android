@@ -13,19 +13,22 @@ class AuthInterceptor @Inject constructor(
         val request = chain.request()
         val requestBuilder = request.newBuilder()
 
-        // 1. 检查请求的主机名
-        // 如果请求是发往 Cloudflare R2 的，直接跳过添加 Authorization Header
-        if (request.url.host.contains("cloudflarestorage.com")) {
-            return chain.proceed(request)
-        }
 
-        val token = sessionManager.getToken()
+        val host = request.url.host.lowercase()
 
-        if (!token.isNullOrEmpty()) {
-            requestBuilder.addHeader(
-                "Authorization",
-                "Bearer $token"
-            )
+        // Security check: Only inject the Authorization header if the target
+        // host is within our internal ecosystem (ryansu.uk).
+        // This prevents leaking sensitive Bearer tokens to external providers
+        // like Cloudflare R2 or Amazon S3 during direct uploads.
+
+        if (host.contains("ryansu.uk")) {
+            val token = sessionManager.getToken()
+            if (!token.isNullOrEmpty()) {
+                requestBuilder.addHeader(
+                    "Authorization",
+                    "Bearer $token"
+                )
+            }
         }
 
         return chain.proceed(requestBuilder.build())

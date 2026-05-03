@@ -4,6 +4,7 @@ import com.example.coollib.data.local.SessionManager
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
@@ -27,10 +28,15 @@ class AuthInterceptorTest {
     }
 
     @Test
-    fun `intercept should add Authorization header when token exists`() {
+    fun `intercept should add Authorization header when token exists and host is internal`() {
         // Given
         val token = "mock_token"
+        val internalUrl = "https://api.ryansu.uk/v1/books".toHttpUrl()
+
+        val request = Request.Builder().url(internalUrl).build()
+        every { chain.request() } returns request
         every { sessionManager.getToken() } returns token
+        every { chain.proceed(any()) } returns mockk()
 
         // When
         authInterceptor.intercept(chain)
