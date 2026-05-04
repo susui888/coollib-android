@@ -43,8 +43,8 @@ fun BookCoverImage(
                 .memoryCachePolicy(CachePolicy.ENABLED)
                 .build(),
             contentDescription = null,
-            placeholder = paintBookCover(),
-            error = paintBookCover(),
+            //placeholder = paintBookCover(),
+            //error = paintBookCover(),
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop
         )

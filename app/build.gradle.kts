@@ -124,4 +124,6 @@ dependencies {
     implementation(libs.mlkit.barcode.scanning)
 
     implementation(libs.androidx.browser)
+
+    implementation(libs.androidx.palette.ktx)
 }

@@ -1,5 +1,6 @@
 package com.example.coollib.ui.screens.books
 
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ScrollState
@@ -33,6 +34,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -47,6 +51,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.palette.graphics.Palette
+import coil.ImageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.Review
@@ -122,13 +130,15 @@ fun BookDetailScreenContent(
     onPostReview: (Int, String, List<Uri>) -> Unit,
     scrollState: ScrollState = rememberScrollState()
 ) {
+    val dynamicColor = rememberDominantColor(book.coverUrl)
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF8B4513).copy(alpha = 0.2f),
+                        dynamicColor.copy(alpha = 0.5f),
                         Color.Transparent
                     ),
                 )
@@ -207,7 +217,8 @@ fun BookDetailScreenContent(
 
             Text(
                 text = stringResource(R.string.label_status, status),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 4.dp),
                 color = if (book.available) Color(0xFF2E7D32) else Color.Red,
                 style = MaterialTheme.typography.bodyLarge,
@@ -262,6 +273,37 @@ fun BookDetailScreenContent(
             )
         }
     }
+}
+
+@Composable
+fun rememberDominantColor(imageUrl: String): Color {
+    val context = LocalContext.current
+
+    val defaultColor = Color(0xFF2B1B10)
+    var dominantColor by remember(imageUrl) { mutableStateOf(defaultColor) }
+
+    LaunchedEffect(imageUrl) {
+        val loader = ImageLoader(context)
+        val request = ImageRequest.Builder(context)
+            .data(imageUrl)
+            .allowHardware(false)
+            .build()
+
+        val result = loader.execute(request)
+        if (result is SuccessResult) {
+            val bitmap = (result.drawable as BitmapDrawable).bitmap
+            Palette.from(bitmap).generate { palette ->
+                val swatch = palette?.darkMutedSwatch
+                    ?: palette?.darkVibrantSwatch
+                    ?: palette?.dominantSwatch
+
+                swatch?.rgb?.let { colorInt ->
+                    dominantColor = Color(colorInt)
+                }
+            }
+        }
+    }
+    return dominantColor
 }
 
 @Composable
