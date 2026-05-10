@@ -93,7 +93,7 @@ fun LoginScreen(
             onPasswordChange = { password = it },
             onLoginClick = {
                 when {
-                    username.length < 5 -> loginError = "Username must be longer than 5 characters"
+                    username.length < 3 -> loginError = "Username must be longer than 3 characters"
                     password.length < 6 -> loginError = "Password must be longer than 6 characters"
                     else -> {
                         loginError = null

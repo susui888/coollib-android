@@ -67,7 +67,6 @@ fun TopBar(
     onScanClick: () -> Unit
 ) {
 
-    val context = LocalContext.current
     var showMenuSheet by remember { mutableStateOf(false) }
 
     TopBarContent(

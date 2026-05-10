@@ -26,47 +26,47 @@ class UserViewModel @Inject constructor(
     private val _registerResult = MutableStateFlow<Result<String>?>(null)
     val registerResult: StateFlow<Result<String>?> = _registerResult
 
+    private suspend fun performLogin(username: String, password: String): Result<Pair<String, String>> {
+        return try {
+            val response = userUseCase.login(username, password)
+            val token = response["token"] ?: throw Exception("No token in response")
+            val usernameResp = response["username"] ?: username
+
+            sessionManager.saveToken(token, usernameResp)
+            Log.i(TAG, "Token Saved. username: $usernameResp, token: $token")
+
+            Result.success(token to usernameResp)
+        } catch (e: HttpException) {
+            val errorMsg = e.response()?.errorBody()?.string() ?: e.message()
+            Log.e(TAG, "HttpException: $errorMsg")
+            Result.failure(Exception(errorMsg))
+        } catch (e: Exception) {
+            Log.e(TAG, "Unknown Exception: ${e.message}")
+            Result.failure(e)
+        }
+    }
+
     fun login(username: String, password: String) {
         viewModelScope.launch {
-            val result: Result<Pair<String, String>> = try {
-                val response = userUseCase.login(username, password)
-                val token = response["token"] ?: throw Exception("No token in response")
-                val usernameResp = response["username"] ?: username
-
-                sessionManager.saveToken(token, usernameResp)
-
-                Log.i(TAG, "Token Saved. username: $usernameResp, toke: $token")
-
-                Result.success(token to usernameResp)
-            } catch (e: HttpException) {
-                val errorMsg = e.response()?.errorBody()?.string() ?: e.message()
-
-                Log.i(TAG, "HttpException:  $errorMsg")
-
-                Result.failure(Exception(errorMsg))
-            } catch (e: Exception) {
-                Log.i(TAG, "Unknown Exception:  ${e.message}")
-
-                Result.failure(e)
-            }
-
-            _loginResult.value = result
+            _loginResult.value = performLogin(username, password)
         }
     }
 
     fun register(username: String, password: String, email: String) {
         viewModelScope.launch {
-            val result: Result<String> = try {
+            try {
                 val message = userUseCase.register(username, password, email)
-                Result.success(message)
+                _registerResult.value = Result.success(message)
+
+                Log.i(TAG, "Register success, attempting auto-login for: $username")
+                _loginResult.value = performLogin(username, password)
+
             } catch (e: HttpException) {
                 val errorMsg = e.response()?.errorBody()?.string() ?: e.message()
-                Result.failure(Exception(errorMsg))
+                _registerResult.value = Result.failure(Exception(errorMsg))
             } catch (e: Exception) {
-                Result.failure(e)
+                _registerResult.value = Result.failure(e)
             }
-
-            _registerResult.value = result
         }
     }
 

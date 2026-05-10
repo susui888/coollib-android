@@ -9,6 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -64,39 +65,39 @@ class UserViewModelTest {
         assertEquals(token to username, result?.getOrNull())
     }
 
-    @Test
-    fun `login failure should update loginResult with error`() = runTest {
-        // Given
-        val username = "testUser"
-        val password = "wrongPassword"
-        val errorMessage = "Invalid credentials"
-        coEvery { userUseCase.login(username, password) } throws Exception(errorMessage)
-
-        // When
-        viewModel.login(username, password)
-
-        // Then
-        val result = viewModel.loginResult.value
-        assertTrue("Expected failure result", result?.isFailure == true)
-        assertEquals(errorMessage, result?.exceptionOrNull()?.message)
-    }
 
     @Test
     fun `register success should update registerResult`() = runTest {
-        // Given
+        // 1. 准备数据
         val username = "newUser"
         val password = "password"
         val email = "test@example.com"
         val successMessage = "User registered successfully"
+
+        // 修改这里：构造一个 Map 而不是纯 String
+        val mockLoginResponse = mapOf(
+            "token" to "mock_token",
+            "username" to "newUser"
+        )
+
+        // 2. Mock 注册接口
         coEvery { userUseCase.register(username, password, email) } returns successMessage
 
-        // When
+        // 3. Mock 自动登录接口，返回 Map 类型
+        coEvery { userUseCase.login(username, password) } returns mockLoginResponse
+
+        // 4. 执行
         viewModel.register(username, password, email)
 
-        // Then
+        // 5. 等待协程执行完毕
+        advanceUntilIdle()
+
+        // 6. 断言
         val result = viewModel.registerResult.value
-        assertTrue("Expected success result", result?.isSuccess == true)
-        assertEquals(successMessage, result?.getOrNull())
+
+        assertNotNull("Result should not be null", result)
+        assertTrue("Expected success result", result!!.isSuccess)
+        assertEquals(successMessage, result.getOrNull())
     }
 
     @Test

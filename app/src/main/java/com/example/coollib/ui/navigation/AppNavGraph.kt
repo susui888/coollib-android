@@ -56,7 +56,8 @@ fun AppNavGraph(
                 onBookClick = { bookId ->
                     navController.navigate(Screen.BookDetail.createRoute(bookId))
                 },
-                onLogin = { navController.navigate(Screen.Login.route)
+                onLogin = {
+                    navController.navigate(Screen.Login.route)
                 }
             )
         }
@@ -69,7 +70,7 @@ fun AppNavGraph(
                 }
             )
         }
-        
+
         composable(Screen.Loan.route) {
             LoanScreen(
                 onBack = { navController.popBackStack() },
@@ -99,7 +100,7 @@ fun AppNavGraph(
                 onLoggedIn = { token, username ->
                     onLoginSuccess(token, username)
                     navController.popBackStack()
-                             },
+                },
                 onRegisterClick = { navController.navigate(Screen.Register.route) },
                 onClose = { navController.popBackStack() }
             )
@@ -111,7 +112,13 @@ fun AppNavGraph(
                     navController.previousBackStackEntry
                         ?.savedStateHandle
                         ?.set("msg", msg)
-                    navController.navigate(Screen.Home.route) },
+                },
+                onLoginSuccess = { token, username ->
+                    onLoginSuccess(token, username)
+                    navController.navigate(Screen.Home.route) {
+                        popUpTo(Screen.Register.route) { inclusive = true }
+                    }
+                },
                 onBackClick = { navController.popBackStack() }
             )
         }
@@ -127,11 +134,11 @@ fun AppNavGraph(
             )
         }
 
-        composable(Screen.About.route){
+        composable(Screen.About.route) {
             val context = LocalContext.current
 
             AboutScreen(
-                onNavigateBack = { navController.popBackStack()},
+                onNavigateBack = { navController.popBackStack() },
                 onUrlClick = { url ->
                     try {
                         val customTabsIntent = CustomTabsIntent.Builder()

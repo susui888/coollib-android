@@ -1,5 +1,6 @@
 package com.example.coollib.ui.screens.auth
 
+import android.util.Patterns.EMAIL_ADDRESS
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -25,11 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.example.coollib.R
 
 @Composable
@@ -37,16 +39,24 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: UserViewModel = hiltViewModel(),
     onRegistered: (String) -> Unit = {},
-    onBackClick: () -> Unit = {}
+    onBackClick: () -> Unit = {},
+    onLoginSuccess: (String, String) -> Unit = { _, _ -> },
 ) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
 
     val registerResult by viewModel.registerResult.collectAsState()
+    val loginResult by viewModel.loginResult.collectAsState()
 
     val registerError = registerResult?.exceptionOrNull()?.message
 
+    val emailPattern = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[a-z]{2,}$")
+
+    val isUsernameValid = username.length >= 3
+    val isPasswordValid = password.length >= 6
+    val isEmailValid = EMAIL_ADDRESS.matcher(email).matches()
+    val canRegister = isUsernameValid && isPasswordValid && isEmailValid
 
     RegisterScreenContent(
         username = username,
@@ -56,25 +66,31 @@ fun RegisterScreen(
         email = email,
         onEmailChange = { email = it },
         onRegisterClick = {
-            if (username.isNotBlank() && password.isNotBlank() && email.isNotBlank()) {
+            if (canRegister) {
                 viewModel.register(username, password, email)
-            } else {
-                viewModel.clearRegisterResult()
             }
         },
-        registerError = registerError
+        registerError = registerError,
+        isUsernameError = !isUsernameValid && username.isNotEmpty(),
+        isPasswordError = !isPasswordValid && password.isNotEmpty(),
+        isEmailError = !isEmailValid && email.isNotEmpty(),
+        canRegister = canRegister
     )
-
     LaunchedEffect(registerResult) {
-        registerResult?.fold(
-            onSuccess = { message ->
-                if (message.isNotBlank()) {
-                    onRegistered("User registered successfully.")
-                    viewModel.clearRegisterResult()
-                }
-            },
-            onFailure = { }
-        )
+        registerResult?.onSuccess { message ->
+            if (message.isNotBlank()) {
+                onRegistered("User registered successfully.")
+            }
+        }
+    }
+
+    LaunchedEffect(loginResult) {
+        loginResult?.onSuccess { (token, username) ->
+            onLoginSuccess(token, username)
+
+            viewModel.clearRegisterResult()
+            viewModel.clearLoginResult()
+        }
     }
 }
 
@@ -87,7 +103,11 @@ fun RegisterScreenContent(
     email: String,
     onEmailChange: (String) -> Unit,
     onRegisterClick: () -> Unit,
-    registerError: String? = null
+    registerError: String? = null,
+    isUsernameError: Boolean = false,
+    isPasswordError: Boolean = false,
+    isEmailError: Boolean = false,
+    canRegister: Boolean = false
 ) {
     Column(
         modifier = Modifier
@@ -131,21 +151,40 @@ fun RegisterScreenContent(
                     value = username,
                     onValueChange = onUsernameChange,
                     label = { Text("Username") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = isUsernameError,
+                    supportingText = {
+                        if (isUsernameError){
+                            Text("Must be more than 2 characters")
+                        }
+                    }
                 )
                 OutlinedTextField(
                     value = password,
                     onValueChange = onPasswordChange,
                     label = { Text("Password") },
                     visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = isPasswordError,
+                    supportingText = {
+                        if (isPasswordError){
+                            Text("Must be more than 5 characters")
+                        }
+                    }
                 )
 
                 OutlinedTextField(
                     value = email,
                     onValueChange = onEmailChange,
                     label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    isError = isEmailError,
+                    supportingText = {
+                        if (isEmailError){
+                            Text("Invalid email format")
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
                 )
             }
         }
@@ -154,6 +193,7 @@ fun RegisterScreenContent(
 
         Button(
             onClick = onRegisterClick,
+            enabled = canRegister,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
