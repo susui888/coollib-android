@@ -55,8 +55,8 @@ class UserViewModel @Inject constructor(
     fun register(username: String, password: String, email: String) {
         viewModelScope.launch {
             try {
-                val message = userUseCase.register(username, password, email)
-                _registerResult.value = Result.success(message)
+                val response = userUseCase.register(username, password, email)
+                _registerResult.value = Result.success(response.message)
 
                 Log.i(TAG, "Register success, attempting auto-login for: $username")
                 _loginResult.value = performLogin(username, password)

@@ -4,6 +4,10 @@ package com.example.coollib.data.remote
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+data class MessageResponse(
+    val message: String
+)
+
 interface UserApi {
 
     @POST("auth/login")
@@ -14,5 +18,5 @@ interface UserApi {
     @POST("auth/register")
     suspend fun register(
         @Body request: UserDto      // username, password, email 全部使用
-    ): String                       // 返回 "User registered successfully"
+    ): MessageResponse              // 返回 "User registered successfully"
 }

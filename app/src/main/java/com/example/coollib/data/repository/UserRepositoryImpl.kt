@@ -1,5 +1,6 @@
 package com.example.coollib.data.repository
 
+import com.example.coollib.data.remote.MessageResponse
 import com.example.coollib.data.remote.UserApi
 import com.example.coollib.data.remote.UserDto
 import com.example.coollib.domain.repository.UserRepository
@@ -14,7 +15,7 @@ class UserRepositoryImpl @Inject constructor(
         return userApi.login(userDto)
     }
 
-    override suspend fun register(username: String, password: String, email: String): String {
+    override suspend fun register(username: String, password: String, email: String): MessageResponse {
         val userDto = UserDto(username, password, email)
         return userApi.register(userDto)
     }

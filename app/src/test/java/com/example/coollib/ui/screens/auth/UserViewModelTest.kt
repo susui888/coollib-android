@@ -2,6 +2,7 @@ package com.example.coollib.ui.screens.auth
 
 import android.util.Log
 import com.example.coollib.data.local.SessionManager
+import com.example.coollib.data.remote.MessageResponse
 import com.example.coollib.domain.usecase.UserUseCase
 import io.mockk.*
 import kotlinx.coroutines.Dispatchers
@@ -72,7 +73,8 @@ class UserViewModelTest {
         val username = "newUser"
         val password = "password"
         val email = "test@example.com"
-        val successMessage = "User registered successfully"
+        val msgText = "User registered successfully"
+        val mockResponse = MessageResponse(message = msgText)
 
         // 修改这里：构造一个 Map 而不是纯 String
         val mockLoginResponse = mapOf(
@@ -81,7 +83,7 @@ class UserViewModelTest {
         )
 
         // 2. Mock 注册接口
-        coEvery { userUseCase.register(username, password, email) } returns successMessage
+        coEvery { userUseCase.register(username, password, email) } returns mockResponse
 
         // 3. Mock 自动登录接口，返回 Map 类型
         coEvery { userUseCase.login(username, password) } returns mockLoginResponse
@@ -97,7 +99,7 @@ class UserViewModelTest {
 
         assertNotNull("Result should not be null", result)
         assertTrue("Expected success result", result!!.isSuccess)
-        assertEquals(successMessage, result.getOrNull())
+        assertEquals(msgText, result.getOrNull())
     }
 
     @Test
