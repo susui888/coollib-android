@@ -26,6 +26,11 @@ interface ReviewApi {
         @Url url: String,
         @Body image: RequestBody
     ): Response<Unit>
+
+    @DELETE("reviews/{id}")
+    suspend fun deleteReview(
+        @Path("id") id: Int
+    ): Response<Unit>
 }
 
 data class UploadUrlResponse(

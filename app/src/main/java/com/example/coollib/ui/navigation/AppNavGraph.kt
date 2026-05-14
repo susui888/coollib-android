@@ -21,6 +21,7 @@ import com.example.coollib.ui.screens.settings.AboutScreen
 import com.example.coollib.ui.screens.statistics.LoanScreen
 import com.example.coollib.ui.screens.statistics.StatisticsScreen
 import androidx.core.net.toUri
+import com.example.coollib.ui.screens.reviews.ReviewScreen
 
 
 @Composable
@@ -151,6 +152,13 @@ fun AppNavGraph(
                         context.startActivity(intent)
                     }
                 }
+            )
+        }
+
+        composable(Screen.Review.route){
+            ReviewScreen(
+                onBack = { navController.popBackStack() },
+                onLogin = {},
             )
         }
     }

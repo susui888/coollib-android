@@ -11,8 +11,9 @@ import androidx.room.RoomDatabase
         SearchHistoryEntity::class,
         CategoryEntity::class,
         NewestBookRef::class,
+        ReviewEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -23,4 +24,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun searchHistoryDao(): SearchHistoryDao
 
     abstract fun categoryDao(): CategoryDao
+
+    abstract fun reviewDao(): ReviewDao
 }

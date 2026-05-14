@@ -5,8 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.util.Log
+import com.example.coollib.data.local.BookDao
+import com.example.coollib.data.local.ReviewDao
 import com.example.coollib.data.mapper.toDomain
 import com.example.coollib.data.mapper.toDto
+import com.example.coollib.data.mapper.toEntity
 import com.example.coollib.data.remote.APIConfig
 import com.example.coollib.data.remote.ReviewApi
 import com.example.coollib.di.IoDispatcher
@@ -15,6 +18,8 @@ import com.example.coollib.domain.repository.ReviewRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import jakarta.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -24,9 +29,40 @@ private const val TAG = "ReviewRepository"
 
 class ReviewRepositoryImpl @Inject constructor(
     private val reviewApi: ReviewApi,
+    private val reviewDao: ReviewDao,
+    private val bookDao: BookDao,
     @param:ApplicationContext private val context: Context,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ReviewRepository {
+
+    override fun getAllLocalReviews(): Flow<List<Review>> {
+        return reviewDao.getAllReviews().map { entities ->
+            entities.map { entity ->
+                val review = entity.toDomain()
+
+                val associatedBook = bookDao.getBookById(review.bookId)?.toDomain()
+
+                review.copy(book = associatedBook)
+            }
+        }
+    }
+
+    override suspend fun deleteReview(review: Review): Boolean = withContext(ioDispatcher) {
+        runCatching {
+            val response = reviewApi.deleteReview(review.id ?: return@withContext false)
+
+            if (response.isSuccessful) {
+                reviewDao.deleteReview(review.toEntity())
+                true
+            } else {
+                Log.e(TAG, "Failed to delete remote review: ${response.code()}")
+                false
+            }
+        }.getOrElse { e ->
+            Log.e(TAG, "Error deleting review", e)
+            false
+        }
+    }
 
     override suspend fun getReviewsByBook(bookId: Int): List<Review> = withContext(ioDispatcher) {
         runCatching {
@@ -49,7 +85,17 @@ class ReviewRepositoryImpl @Inject constructor(
             val response = reviewApi.createReview(review.toDto())
 
             if (response.isSuccessful) {
-                response.body()?.toDomain()
+                val savedReview = response.body()?.toDomain()
+
+                savedReview?.let { domain ->
+                    // 因为 API 响应不包含 imageUrls，从原始 review 中拷贝图片路径
+                    val entityToSave = domain.toEntity().copy(
+                        imageUrls = review.imageUrls.joinToString(",")
+                    )
+                    reviewDao.insertReview(entityToSave)
+                }
+
+                savedReview
             } else {
                 Log.e(TAG, "Failed to create review: ${response.code()}")
                 null

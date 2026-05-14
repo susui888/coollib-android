@@ -10,7 +10,7 @@
     <string name="password_placeholder">Enter your password</string>
     <string name="message_text">email: %s, password: %s</string>
     <string name="login_button">Login</string>
-    <string name="please_login">Please login to see your loan history</string>
+    <string name="please_login">Please login to see</string>
 
     <!-- ================= Bottom Navigation ================= -->
     <string name="home_label">Home</string>
@@ -75,4 +75,6 @@
 
     <!-- ================= Loans ================= -->
     <string name="loan_history_label">Loan History</string>
+    <string name="reviews_label">Reviews</string>
+    <string name="no_reviews_found">No Reviews Found</string>
 </resources>

@@ -3,6 +3,7 @@ package com.example.coollib.domain.usecase
 import android.net.Uri
 import com.example.coollib.domain.model.Review
 import com.example.coollib.domain.repository.ReviewRepository
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class ReviewUseCase @Inject constructor(
@@ -19,5 +20,13 @@ class ReviewUseCase @Inject constructor(
 
     suspend fun uploadImages(uris: List<Uri>): List<String> {
         return repository.uploadReviewImages(uris)
+    }
+
+    fun getAllLocalReviews(): Flow<List<Review>> {
+        return repository.getAllLocalReviews()
+    }
+
+    suspend fun deleteReview(review: Review): Boolean {
+        return repository.deleteReview(review)
     }
 }

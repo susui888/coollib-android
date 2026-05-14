@@ -6,8 +6,10 @@ import com.example.coollib.data.local.AppDatabase
 import com.example.coollib.data.local.BookDao
 import com.example.coollib.data.local.CartDao
 import com.example.coollib.data.local.CategoryDao
+import com.example.coollib.data.local.ReviewDao
 import com.example.coollib.data.local.SearchHistoryDao
 import com.example.coollib.data.local.WishlistDao
+import com.example.coollib.domain.model.Review
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -58,4 +60,9 @@ object DatabaseModule {
     fun provideCategoryDao(
         database: AppDatabase
     ): CategoryDao = database.categoryDao()
+
+    @Provides
+    fun provideReviewDao(
+        database: AppDatabase
+    ): ReviewDao = database.reviewDao()
 }

@@ -93,6 +93,9 @@ fun TopBar(
                 "HISTORY" ->
                     navController.navigate(Screen.Loan.createRoute("history"))
 
+                "REVIEWS" ->
+                    navController.navigate("review")
+
                 "ABOUT" ->
                     navController.navigate("about")
 
@@ -207,8 +210,8 @@ private fun FullScreenMenuContent(
             onItemClick("MY_LOANS")
         }
 
-        MenuListItem(Icons.Default.BookmarkBorder, "Reservations") {
-            onItemClick("RESERVATIONS")
+        MenuListItem(Icons.Default.BookmarkBorder, "Reviews") {
+            onItemClick("REVIEWS")
         }
 
         MenuListItem(Icons.Default.History, "History") {

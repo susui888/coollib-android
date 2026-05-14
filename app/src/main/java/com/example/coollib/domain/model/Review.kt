@@ -10,5 +10,7 @@ data class Review(
     val rating: Int,
     val content: String,
     val createdAt: Instant,
-    val imageUrls: List<String> = emptyList()
+    val imageUrls: List<String> = emptyList(),
+
+    val book: Book? = null
 )

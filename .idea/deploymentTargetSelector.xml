@@ -24,10 +24,13 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="reviewsSection_displaysReviewerNameAndContent()">
+      <SelectionState runConfigName="ReviewListScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="reviewsSection_emptyState_displaysNoReviewsMessage()">
+      <SelectionState runConfigName="ReviewListEmptyPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="BookReviewSectionPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
