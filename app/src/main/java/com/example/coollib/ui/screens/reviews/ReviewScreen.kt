@@ -8,11 +8,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,6 +55,7 @@ fun ReviewScreen(
         isLoggedIn = isLoggedIn,
         onBack = onBack,
         onLogin = onLogin,
+        onDelete = { review -> viewModel.deleteReview(review) },
         modifier = modifier
     )
 }
@@ -61,8 +68,35 @@ fun ReviewContent(
     isLoggedIn: Boolean,
     onBack: () -> Unit,
     onLogin: () -> Unit,
+    onDelete: (review: Review) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var reviewToDelete by remember { mutableStateOf<Review?>(null) }
+
+    if (reviewToDelete != null) {
+        AlertDialog(
+            onDismissRequest = { reviewToDelete = null },
+            title = { Text("Delete Review?") },
+            text = { Text("This action will permanently remove your review and associated images from CoolLib. This cannot be undone.") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        reviewToDelete?.let { onDelete(it) }
+                        reviewToDelete = null
+                    },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Delete")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { reviewToDelete = null }) {
+                    Text("Cancel")
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -103,8 +137,47 @@ fun ReviewContent(
                         contentPadding = PaddingValues(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        items(reviews) { review ->
-                            ReviewHistoryItem(review = review)
+                        items(
+                            items = reviews,
+                            key = { it.id?: 0 }
+                        ) { review ->
+
+                            val dismissState = rememberSwipeToDismissBoxState()
+
+                            // 2. 使用 LaunchedEffect 监听 currentValue 的改变
+                            LaunchedEffect(dismissState.currentValue) {
+                                if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+                                    reviewToDelete = review
+                                    dismissState.snapTo(SwipeToDismissBoxValue.Settled)
+                                }
+                            }
+
+                            SwipeToDismissBox(
+                                state = dismissState,
+                                enableDismissFromStartToEnd = false, // 只允许从右向左滑
+                                backgroundContent = {
+                                    val color = when (dismissState.dismissDirection) {
+                                        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
+                                        else -> Color.Transparent
+                                    }
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CardDefaults.elevatedShape)
+                                            .background(color)
+                                            .padding(horizontal = 20.dp),
+                                        contentAlignment = Alignment.CenterEnd
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete",
+                                            tint = MaterialTheme.colorScheme.onErrorContainer
+                                        )
+                                    }
+                                }
+                            ) {
+                                ReviewHistoryItem(review = review)
+                            }
                         }
                     }
                 }
@@ -228,7 +301,8 @@ fun ReviewScreenPreview() {
             isLoading = false,
             isLoggedIn = true,
             onBack = {},
-            onLogin = {}
+            onLogin = {},
+            onDelete = {}
         )
     }
 }
@@ -242,7 +316,8 @@ fun ReviewScreenEmptyPreview() {
             isLoading = false,
             isLoggedIn = true,
             onBack = {},
-            onLogin = {}
+            onLogin = {},
+            onDelete = {},
         )
     }
 }
@@ -256,7 +331,8 @@ fun ReviewScreenNotLoggedInPreview() {
             isLoading = false,
             isLoggedIn = false,
             onBack = {},
-            onLogin = {}
+            onLogin = {},
+            onDelete = {}
         )
     }
 }

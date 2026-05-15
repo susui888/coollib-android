@@ -49,7 +49,7 @@ class ReviewRepositoryImpl @Inject constructor(
 
     override suspend fun deleteReview(review: Review): Boolean = withContext(ioDispatcher) {
         runCatching {
-            val response = reviewApi.deleteReview(review.id ?: return@withContext false)
+            val response = reviewApi.deleteReview(review.bookId ?: return@withContext false)
 
             if (response.isSuccessful) {
                 reviewDao.deleteReview(review.toEntity())
