@@ -27,10 +27,10 @@
       <SelectionState runConfigName="ReviewListScreenPreview">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="ReviewListEmptyPreview">
+      <SelectionState runConfigName="ReviewScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="BookReviewSectionPreview">
+      <SelectionState runConfigName="reviewList_showsItems_whenLoggedInWithData()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
