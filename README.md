@@ -1,6 +1,4 @@
-# CoolLib Android
-
-[![Android CI/CD](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml/badge.svg)](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml)
+# CoolLib Android Client &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Android UI Demo](https://img.shields.io/badge/Android-UI_Demo-3DDC84?style=flat&logo=android&logoColor=white)](https://ryansu.uk/android-demo/)&nbsp;&nbsp;&nbsp;&nbsp;[![Android CI/CD](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml/badge.svg)](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml)
 
 <p>
   <img src="https://img.shields.io/badge/Kotlin-2.x-7F52FF"/>&nbsp;
