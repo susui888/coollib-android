@@ -2,39 +2,76 @@
 
 [![Android CI/CD](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml/badge.svg)](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml)
 
-<!-- Core & UI -->
-![Kotlin](https://img.shields.io/badge/Kotlin-2.3.20-purple)&nbsp;
-![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-2026.03-3DDC84)&nbsp;
-![Material 3](https://img.shields.io/badge/Material_3-1.4.0-6750A4)&nbsp;
-![Hilt](https://img.shields.io/badge/Hilt-2.59.2-7FADF2)
+<p>
+  <img src="https://img.shields.io/badge/Kotlin-2.x-7F52FF"/>&nbsp;
+  <img src="https://img.shields.io/badge/Jetpack_Compose-UI-3DDC84"/>&nbsp;
+  <img src="https://img.shields.io/badge/Material_3-Design-6750A4"/>&nbsp;
+  <img src="https://img.shields.io/badge/Architecture-Clean_Architecture-4B5563?labelColor=111827"/>
+</p>
 
-<!-- Architecture & Hardware -->
-![Room DB](https://img.shields.io/badge/Room_DB-2.8.4-4F5B66)&nbsp;
-![Retrofit](https://img.shields.io/badge/Retrofit-3.0.0-048A81)&nbsp;
-![CameraX & ML Kit](https://img.shields.io/badge/CameraX_%26_ML_Kit-Barcode-orange)&nbsp;
-![Palette](https://img.shields.io/badge/Palette-Dynamic_Color-ED8B00)
+<p>
+  <img src="https://img.shields.io/badge/Room-Local_DB-4F5B66"/>&nbsp;
+  <img src="https://img.shields.io/badge/Retrofit-Networking-048A81"/>&nbsp;
+  <img src="https://img.shields.io/badge/Hilt-DI-7FADF2"/>&nbsp;
+  <img src="https://img.shields.io/badge/CameraX-Barcode_Scan-orange"/>&nbsp;
+</p>
 
+Android client for the CoolLib ecosystem. Built with Jetpack Compose and Clean Architecture, designed for offline-first library management with synchronized backend integration.
 
-A modern, reactive library management application built with **Jetpack Compose**. Part of the CoolLib ecosystem.
+## Ecosystem
 
-## Ecosystem Links
-* [CoolLib Server](https://github.com/susui888/CoolLeaf) - Spring Boot API
-* [CoolLib iOS](https://github.com/susui888/coollib-ios) - iOS Counterpart
+* [CoolLib Server](https://github.com/susui888/CoolLeaf) — Spring Boot backend API
+* [CoolLib iOS](https://github.com/susui888/coollib-ios) — SwiftUI client
 
 ## Tech Stack
-* **UI:** Jetpack Compose
-* **Architecture:** Clean Architecture + MVVM
-* **Local DB:** Room (Offline-First approach)
-* **Networking:** Retrofit + OkHttp
-* **Dependency Injection:** Hilt
 
-## Key Features
-* **Reactive UI:** Real-time data updates across the app.
-* **ISBN Scanner:** Quick book entry using camera integration.
-* **Offline Support:** Full data persistence using Room.
-* **JWT Sync:** Seamless synchronization with the CoolLib Server.
+### Core
 
-## Screenshots
-| Main Library | Book Details |
-|---|---|
-| [Image Placeholder] | [Image Placeholder] |
+* Kotlin
+* Jetpack Compose
+* Material 3
+
+### Architecture
+
+* Clean Architecture
+* MVVM
+* Hilt (Dependency Injection)
+
+### Data Layer
+
+* Room (local persistence)
+* Retrofit + OkHttp (network layer)
+* JWT-based authentication sync
+
+### Device Integration
+
+* CameraX (ISBN barcode scanning)
+* ML Kit (barcode recognition)
+* AndroidX lifecycle components
+
+## Capabilities
+
+* Offline-first library management with local persistence
+* ISBN scanning for fast book ingestion
+* JWT-secured synchronization with backend API
+* Reactive UI built with Jetpack Compose
+* Modular architecture aligned with server-side Clean Architecture design
+* Efficient DTO-based synchronization with backend services
+
+## Architecture Overview
+
+```mermaid
+flowchart LR
+    UI(Compose UI) --> VM(ViewModel)
+    VM --> UseCase(Use Cases)
+    UseCase --> Repo(Repository)
+    Repo --> Local[(Room DB)]
+    Repo --> Remote(Retrofit API)
+
+    style UI fill:#22c55e,stroke:#16a34a,stroke-width:2px,color:#fff
+    style VM fill:#475569,stroke:#334155,stroke-width:2px,color:#fff
+    style UseCase fill:#475569,stroke:#334155,stroke-width:2px,color:#fff
+    style Repo fill:#475569,stroke:#334155,stroke-width:2px,color:#fff
+    style Local fill:#bfdbfe,stroke:#60a5fa,stroke-width:1px,color:#1f2937
+    style Remote fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
+    linkStyle default stroke:#94a3b8,stroke-width:1.5px
