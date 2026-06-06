@@ -43,7 +43,7 @@ Android client for the CoolLib ecosystem. Built with Jetpack Compose and Clean A
 
 ### Device Integration
 
-* CameraX (ISBN barcode scanning)
+* CameraX (barcode scanning)
 * ML Kit (barcode recognition)
 * AndroidX lifecycle components
 
