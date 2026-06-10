@@ -2,8 +2,10 @@ package com.example.coollib.ui.screens.scan
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.usecase.BookUseCase
 import com.example.coollib.domain.usecase.CartUseCase
+import com.example.coollib.telemetry.TelemetryManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -16,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ScanViewModel @Inject constructor(
     private val bookUseCase: BookUseCase,
-    private val cartUseCase: CartUseCase
+    private val cartUseCase: CartUseCase,
+    private val telemetryManager: TelemetryManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScanUiState())
@@ -50,13 +53,32 @@ class ScanViewModel @Inject constructor(
                     cartUseCase.addToCart(book.id)
                     _uiState.value = ScanUiState(isLoading = false, detectedBookTitle = book.title)
                     _uiEvent.emit(ScanUiEvent.NavigateToCart)
+
+                    telemetryManager.trackAction(
+                        actionName = TelemetryEvents.Actions.BOOK_ADD_CART,
+                        bookId = book.id,
+                        extra = mapOf(
+                            "isbn" to isbn,
+                            "trigger_source" to "BARCODE_SCANNER"
+                        )
+                    )
                 } else {
                     _uiState.value = ScanUiState(isLoading = false, error = "Book not found")
                     _uiEvent.emit(ScanUiEvent.ShowError("Book with ISBN $isbn not found"))
+
+                    telemetryManager.trackAction(
+                        actionName = "SCAN_BOOK_NOT_FOUND",
+                        extra = mapOf("scanned_isbn" to isbn)
+                    )
                 }
             } catch (e: Exception) {
                 _uiState.value = ScanUiState(isLoading = false, error = "Book not found")
                 _uiEvent.emit(ScanUiEvent.ShowError("Book with ISBN $isbn not found"))
+
+                telemetryManager.trackException(
+                    actionName = TelemetryEvents.Actions.HOME_DATA_LOAD_FAILURE,
+                    errorMessage = e.message ?: "Network error or JSON breakdown when fetching ISBN: $isbn"
+                )
             }
         }
     }

@@ -7,8 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.Review
 import com.example.coollib.domain.model.SearchQuery
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.usecase.BookUseCase
 import com.example.coollib.domain.usecase.ReviewUseCase
+import com.example.coollib.telemetry.TelemetryManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +23,7 @@ import javax.inject.Inject
 class BookViewModel @Inject constructor(
     private val bookUseCase: BookUseCase,
     private val reviewUseCase: ReviewUseCase,
+    private val telemetryManager: TelemetryManager
 ) : ViewModel() {
 
     private val _books = MutableStateFlow<List<Book>>(emptyList())
@@ -35,8 +38,21 @@ class BookViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _books.value = bookUseCase.searchBooks(query)
+
+                telemetryManager.trackAction(
+                    actionName = TelemetryEvents.Actions.BOOK_SEARCH,
+                    extra = mapOf(
+                        "search_type" to query.searchType.name,
+                        "query_text" to query.toLogText()
+                    )
+                )
             } catch (e: Exception) {
                 _books.value = emptyList()
+
+                telemetryManager.trackException(
+                    actionName = TelemetryEvents.Actions.HOME_DATA_LOAD_FAILURE,
+                    errorMessage = e.message ?: "Search queries failure for text: ${query.toLogText()}"
+                )
             }
         }
 
@@ -47,6 +63,11 @@ class BookViewModel @Inject constructor(
                 loadReviews(id)
             } catch (e: Exception) {
                 _selectedBook.value = null
+
+                telemetryManager.trackException(
+                    actionName = TelemetryEvents.Actions.BOOK_DETAIL_LOAD_FAILURE,
+                    errorMessage = e.message ?: "Fetch book detail failed for bookId: $id"
+                )
             }
         }
 
@@ -77,6 +98,15 @@ class BookViewModel @Inject constructor(
             val result = reviewUseCase.createReview(newReview)
             if (result != null) {
                 loadReviews(bookId)
+
+                telemetryManager.trackAction(
+                    actionName = TelemetryEvents.Actions.BOOK_POST_REVIEW_SUCCESS,
+                    bookId = bookId,
+                    extra = mapOf(
+                        "rating" to rating.toString(),
+                        "image_count" to imageUris.size.toString()
+                    )
+                )
             }
         }
     }

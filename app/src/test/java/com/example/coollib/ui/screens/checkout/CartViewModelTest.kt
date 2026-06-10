@@ -1,7 +1,9 @@
 package com.example.coollib.ui.screens.checkout
 
 import com.example.coollib.data.local.SessionManager
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.usecase.CartUseCase
+import com.example.coollib.telemetry.TelemetryManager
 import com.example.coollib.ui.previewSupport.MockCart
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -10,7 +12,6 @@ import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
 import org.junit.After
@@ -23,8 +24,8 @@ class CartViewModelTest {
 
     private val cartUseCase: CartUseCase = mockk()
     private val sessionManager: SessionManager = mockk()
+    private val telemetryManager: TelemetryManager = mockk(relaxed = true) // 🌟 注入遥测 Mock
 
-    // 使用 UnconfinedTestDispatcher 可以让测试中的 Flow 收集立即执行
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: CartViewModel
 
@@ -32,17 +33,16 @@ class CartViewModelTest {
     fun setup() {
         Dispatchers.setMain(testDispatcher)
 
-        // 配置通用的 Mock 行为
         coEvery { cartUseCase.getCartItems() } returns MutableStateFlow(MockCart.list)
         coEvery { cartUseCase.getCartCount() } returns MutableStateFlow(MockCart.list.size)
         coEvery { cartUseCase.isBookInCart(any()) } returns MutableStateFlow(true)
         coEvery { cartUseCase.addToCart(any()) } returns Unit
         coEvery { cartUseCase.removeFromCart(any()) } returns Unit
 
-        // 默认状态设为已登录
         every { sessionManager.getToken() } returns "mock_token"
 
-        viewModel = CartViewModel(cartUseCase, sessionManager)
+        // 🌟 注入遥测管理器
+        viewModel = CartViewModel(cartUseCase, sessionManager, telemetryManager)
     }
 
     @After
@@ -52,61 +52,62 @@ class CartViewModelTest {
 
     @Test
     fun `cartItems should reflect list from use case`() = runTest {
-        // Given: cartItems 正在被收集（激活 WhileSubscribed）
         backgroundScope.launch(testDispatcher) { viewModel.cartItems.collect {} }
-
-        // Then
         assertEquals(MockCart.list, viewModel.cartItems.value)
     }
 
     @Test
     fun `borrowBooks should emit NavigateToLogin when user is not logged in`() = runTest {
-        // Given
         every { sessionManager.getToken() } returns null
 
-        // 使用 backgroundScope 自动处理事件收集
         val events = mutableListOf<CartUiEvent>()
         backgroundScope.launch(testDispatcher) {
             viewModel.uiEvent.collect { events.add(it) }
         }
 
-        // When
         viewModel.borrowBooks()
 
-        // Then
         assertEquals(CartUiEvent.NavigateToLogin, events.first())
     }
 
     @Test
-    fun `borrowBooks should call use case when user is logged in and cart is not empty`() = runTest {
-        // Given: 激活数据流并设置 Mock
+    fun `borrowBooks should call use case and track success when logged in`() = runTest {
         backgroundScope.launch(testDispatcher) { viewModel.cartItems.collect {} }
-
         every { sessionManager.getToken() } returns "valid_token"
         coEvery { cartUseCase.borrowBooks(any()) } returns Result.success("Success")
 
-        // When
         viewModel.borrowBooks()
 
-        // Then
+        // 验证业务调用
         coVerify(exactly = 1) { cartUseCase.borrowBooks(MockCart.list) }
+        // 🌟 验证遥测：借阅成功追踪
+        coVerify(exactly = 1) {
+            telemetryManager.trackAction(
+                actionName = TelemetryEvents.Actions.BOOK_RENT_ACTION,
+                extra = mapOf("cart_items_count" to MockCart.list.size.toString())
+            )
+        }
     }
 
     @Test
-    fun `toggleCart should call removeFromCart when book is already in cart`() = runTest {
-        // When
+    fun `toggleCart should call removeFromCart and track action when book is already in cart`() = runTest {
         viewModel.toggleCart(bookId = 1, isInCart = true)
 
-        // Then
         coVerify { cartUseCase.removeFromCart(1) }
+        // 🌟 验证遥测：移除购物车埋点
+        coVerify(exactly = 1) {
+            telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_REMOVE_CART, bookId = 1)
+        }
     }
 
     @Test
-    fun `toggleCart should call addToCart when book is not in cart`() = runTest {
-        // When
+    fun `toggleCart should call addToCart and track action when book is not in cart`() = runTest {
         viewModel.toggleCart(bookId = 1, isInCart = false)
 
-        // Then
         coVerify { cartUseCase.addToCart(1) }
+        // 🌟 验证遥测：加入购物车埋点
+        coVerify(exactly = 1) {
+            telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_ADD_CART, bookId = 1)
+        }
     }
 }

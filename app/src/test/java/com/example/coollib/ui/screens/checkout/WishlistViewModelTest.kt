@@ -1,6 +1,8 @@
 package com.example.coollib.ui.screens.checkout
 
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.usecase.WishlistUseCase
+import com.example.coollib.telemetry.TelemetryManager // 🌟 引入遥测管理器
 import com.example.coollib.ui.previewSupport.MockWishlist
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -19,6 +21,8 @@ import org.junit.Test
 class WishlistViewModelTest {
 
     private val wishlistUseCase: WishlistUseCase = mockk()
+    private val telemetryManager: TelemetryManager =
+        mockk(relaxed = true) // 🌟 创建 relaxed mock 隔离遥测流
     private val testDispatcher = UnconfinedTestDispatcher()
     private lateinit var viewModel: WishlistViewModel
 
@@ -33,7 +37,8 @@ class WishlistViewModelTest {
         coEvery { wishlistUseCase.addToWishlist(any()) } returns Unit
         coEvery { wishlistUseCase.removeFromWishlist(any()) } returns Unit
 
-        viewModel = WishlistViewModel(wishlistUseCase)
+        // 🌟 注入依赖闭环
+        viewModel = WishlistViewModel(wishlistUseCase, telemetryManager)
     }
 
     @After
@@ -59,30 +64,57 @@ class WishlistViewModelTest {
         assertEquals(MockWishlist.list.size, viewModel.wishlistCount.value)
     }
 
-    @Test
-    fun `toggleWishlist should call removeFromWishlist when book is already in wishlist`() = runTest {
-        // When
-        viewModel.toggleWishlist(bookId = 1, isInWishlist = true)
-
-        // Then
-        coVerify(exactly = 1) { wishlistUseCase.removeFromWishlist(1) }
-    }
+    // ==================================================================================
+    // 🔔 心愿单交互与影子追踪测试集 (Wishlist Interaction & Telemetry Tracking)
+    // ==================================================================================
 
     @Test
-    fun `toggleWishlist should call addToWishlist when book is not in wishlist`() = runTest {
-        // When
-        viewModel.toggleWishlist(bookId = 1, isInWishlist = false)
+    fun `toggleWishlist should call removeFromWishlist and track action when book is already in wishlist`() =
+        runTest {
+            // When
+            viewModel.toggleWishlist(bookId = 1, isInWishlist = true)
 
-        // Then
-        coVerify(exactly = 1) { wishlistUseCase.addToWishlist(1) }
-    }
+            // Then
+            coVerify(exactly = 1) { wishlistUseCase.removeFromWishlist(1) }
+            // 🌟 核心断言：验证移出心愿单的交互行为是否精确外传
+            coVerify(exactly = 1) {
+                telemetryManager.trackAction(
+                    actionName = TelemetryEvents.Actions.BOOK_REMOVE_WISHLIST,
+                    bookId = 1
+                )
+            }
+        }
 
     @Test
-    fun `removeFromWishlist should call use case`() = runTest {
+    fun `toggleWishlist should call addToWishlist and track action when book is not in wishlist`() =
+        runTest {
+            // When
+            viewModel.toggleWishlist(bookId = 2, isInWishlist = false)
+
+            // Then
+            coVerify(exactly = 1) { wishlistUseCase.addToWishlist(2) }
+            // 🌟 核心断言：验证移入心愿单的交互行为是否精确外传
+            coVerify(exactly = 1) {
+                telemetryManager.trackAction(
+                    actionName = TelemetryEvents.Actions.BOOK_ADD_WISHLIST,
+                    bookId = 2
+                )
+            }
+        }
+
+    @Test
+    fun `removeFromWishlist should call use case and track action`() = runTest {
         // When
-        viewModel.removeFromWishlist(bookId = 1)
+        viewModel.removeFromWishlist(bookId = 3)
 
         // Then
-        coVerify(exactly = 1) { wishlistUseCase.removeFromWishlist(1) }
+        coVerify(exactly = 1) { wishlistUseCase.removeFromWishlist(3) }
+        // 🌟 核心断言：验证直接卡片滑除或点击移除时的埋点完备性
+        coVerify(exactly = 1) {
+            telemetryManager.trackAction(
+                actionName = TelemetryEvents.Actions.BOOK_REMOVE_WISHLIST,
+                bookId = 3
+            )
+        }
     }
 }

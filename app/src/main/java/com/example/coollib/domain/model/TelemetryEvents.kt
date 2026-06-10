@@ -18,13 +18,23 @@ object TelemetryEvents {
     }
 
     object Actions {
-        const val AUTH_LOGIN_SUCCESS = "AUTH_LOGIN_SUCCESS"
+        const val BOOK_ADD_CART = "BOOK_ADD_CART"
+        const val BOOK_REMOVE_CART = "BOOK_REMOVE_CART"
         const val BOOK_ADD_WISHLIST = "BOOK_ADD_WISHLIST"
         const val BOOK_REMOVE_WISHLIST = "BOOK_REMOVE_WISHLIST"
-        const val BOOK_RENT_ACTION = "BOOK_RENT_ACTION"
 
-        // 保留用于 ViewModel 核心非致命异常捕捉的事件名
+        const val BOOK_RENT_ACTION = "BOOK_RENT_ACTION"
+        const val AUTH_LOGIN_SUCCESS = "AUTH_LOGIN_SUCCESS"
+
+        const val BOOK_SEARCH = "BOOK_SEARCH"
+        const val BOOK_POST_REVIEW_SUCCESS = "BOOK_POST_REVIEW_SUCCESS"
+
+
         const val HOME_DATA_LOAD_SUCCESS = "HOME_DATA_LOAD_SUCCESS"
-        const val HOME_DATA_LOAD_FAILURE = "HOME_DATA_LOAD_FAILURE"
+        const val HOME_DATA_LOAD_FAILURE = "HOME_DATA_LOAD_FAILURE"   // 首页/通用加载失败
+
+        const val BORROW_ACTION_FAILURE = "BORROW_ACTION_FAILURE"     // 借阅网络结算失败
+        const val WISHLIST_ACTION_FAILURE = "WISHLIST_ACTION_FAILURE" // 心愿单网络同步失败
+        const val BOOK_DETAIL_LOAD_FAILURE = "BOOK_DETAIL_LOAD_FAILURE" // 书籍详情/评论加载失败
     }
 }

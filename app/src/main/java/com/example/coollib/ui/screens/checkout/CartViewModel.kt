@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coollib.data.local.SessionManager
 import com.example.coollib.domain.model.Cart
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.usecase.CartUseCase
+import com.example.coollib.telemetry.TelemetryManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -13,7 +15,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CartViewModel @Inject constructor(
     private val cartUseCase: CartUseCase,
-    private val sessionManager: SessionManager // 注入 SessionManager 来检查登录状态
+    private val sessionManager: SessionManager,
+    private val telemetryManager: TelemetryManager
 ) : ViewModel() {
 
     // UI State: Handle loading, etc.
@@ -44,8 +47,12 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             if (isInCart) {
                 cartUseCase.removeFromCart(bookId)
+
+                telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_REMOVE_CART, bookId = bookId)
             } else {
                 cartUseCase.addToCart(bookId)
+
+                telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_ADD_CART, bookId = bookId)
             }
         }
     }
@@ -53,6 +60,8 @@ class CartViewModel @Inject constructor(
     fun removeFromCart(bookId: Int) {
         viewModelScope.launch {
             cartUseCase.removeFromCart(bookId)
+
+            telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_ADD_CART, bookId = bookId)
         }
     }
 
@@ -76,11 +85,21 @@ class CartViewModel @Inject constructor(
                 .onSuccess { message ->
                     _uiState.update { it.copy(isLoading = false) }
                     _uiEvent.emit(CartUiEvent.ShowSnackbar(message))
-                    _uiEvent.emit(CartUiEvent.NavigateBack) 
+                    _uiEvent.emit(CartUiEvent.NavigateBack)
+
+                    telemetryManager.trackAction(
+                        actionName = TelemetryEvents.Actions.BOOK_RENT_ACTION,
+                        extra = mapOf("cart_items_count" to currentItems.size.toString())
+                    )
                 }
                 .onFailure { error ->
                     _uiState.update { it.copy(isLoading = false) }
                     _uiEvent.emit(CartUiEvent.ShowSnackbar(error.message ?: "Borrow failed"))
+
+                    telemetryManager.trackException(
+                        actionName = TelemetryEvents.Actions.BORROW_ACTION_FAILURE,
+                        errorMessage = error.message ?: "Borrow execution API failed"
+                    )
                 }
         }
     }

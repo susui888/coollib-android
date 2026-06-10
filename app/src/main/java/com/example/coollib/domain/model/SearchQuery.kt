@@ -21,5 +21,14 @@ data class SearchQuery(
             !searchTerm.isNullOrBlank() -> SearchType.SEARCH
             else -> SearchType.ALL
         }
+
+    fun toLogText(): String = when (searchType) {
+        SearchType.CATEGORY -> category.toString()
+        SearchType.AUTHOR -> author.orEmpty()
+        SearchType.PUBLISHER -> publisher.orEmpty()
+        SearchType.YEAR -> year.toString()
+        SearchType.SEARCH -> searchTerm.orEmpty()
+        SearchType.ALL -> "ALL_BOOKS"
+    }
 }
 

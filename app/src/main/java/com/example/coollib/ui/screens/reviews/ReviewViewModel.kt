@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.coollib.data.local.SessionManager
 import com.example.coollib.domain.model.Review
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.usecase.ReviewUseCase
+import com.example.coollib.telemetry.TelemetryManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ReviewViewModel @Inject constructor(
     private val reviewUseCase: ReviewUseCase,
-    private val sessionManager: SessionManager
+    private val sessionManager: SessionManager,
+    private val telemetryManager: TelemetryManager
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)
@@ -43,9 +46,16 @@ class ReviewViewModel @Inject constructor(
             runCatching {
                 reviewUseCase.deleteReview(review)
             }.onSuccess {
-
-            }.onFailure {
-
+                telemetryManager.trackAction(
+                    actionName = "BOOK_DELETE_REVIEW_SUCCESS",
+                    bookId = review.bookId,
+                    extra = mapOf("review_id" to (review.id?.toString() ?: "local"))
+                )
+            }.onFailure { error ->
+                telemetryManager.trackException(
+                    actionName = TelemetryEvents.Actions.BOOK_DETAIL_LOAD_FAILURE, // 或者是你后续扩展的 REVIEW_ACTION_FAILURE
+                    errorMessage = error.message ?: "Failed to delete reviewId: ${review.id} for bookId: ${review.bookId}"
+                )
             }
             _isLoading.value = false
         }

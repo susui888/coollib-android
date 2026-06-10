@@ -2,8 +2,10 @@ package com.example.coollib.ui.screens.checkout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.model.Wishlist
 import com.example.coollib.domain.usecase.WishlistUseCase
+import com.example.coollib.telemetry.TelemetryManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WishlistViewModel @Inject constructor(
-    private val wishlistUseCase: WishlistUseCase
+    private val wishlistUseCase: WishlistUseCase,
+    private val telemetryManager: TelemetryManager
 ) : ViewModel() {
 
     fun toggleWishlist(bookId: Int, isInWishlist: Boolean) {
@@ -22,8 +25,12 @@ class WishlistViewModel @Inject constructor(
             runCatching {
                 if (isInWishlist) {
                     wishlistUseCase.removeFromWishlist(bookId)
+
+                    telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_REMOVE_WISHLIST, bookId = bookId)
                 } else {
                     wishlistUseCase.addToWishlist(bookId)
+
+                    telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_ADD_WISHLIST, bookId = bookId)
                 }
             }
         }
@@ -51,6 +58,8 @@ class WishlistViewModel @Inject constructor(
     fun removeFromWishlist(bookId: Int) {
         viewModelScope.launch {
             wishlistUseCase.removeFromWishlist(bookId)
+
+            telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_REMOVE_WISHLIST, bookId = bookId)
         }
     }
 }
