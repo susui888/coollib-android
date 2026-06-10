@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.coollib.R
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 
 @Composable
 fun LoginScreen(
@@ -44,6 +46,8 @@ fun LoginScreen(
     onRegisterClick: () -> Unit = {},
     onClose: () -> Unit = {}
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.LOGIN)
+
     val snackbarHostState = remember { SnackbarHostState() }
     val registerMsg = navController.currentBackStackEntry
         ?.savedStateHandle

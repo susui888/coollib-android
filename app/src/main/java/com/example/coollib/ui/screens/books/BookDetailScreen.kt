@@ -58,6 +58,8 @@ import coil.request.SuccessResult
 import com.example.coollib.R
 import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.Review
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.review.AddReviewSection
 import com.example.coollib.ui.components.book.BookCoverImage
 import com.example.coollib.ui.components.review.BookReviewSection
@@ -78,6 +80,8 @@ fun BookDetailScreen(
     onPublisherClick: (String) -> Unit,
     onYearClick: (Int) -> Unit,
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.BOOK_DETAIL)
+
     val selectedBook by bookViewModel.selectedBook.collectAsStateWithLifecycle()
     val reviews by bookViewModel.reviews.collectAsStateWithLifecycle()
 

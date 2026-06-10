@@ -47,6 +47,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.coollib.R
 import com.example.coollib.domain.model.Loan
 import com.example.coollib.domain.model.LoanStatus
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.book.BookCoverImage
 import com.example.coollib.ui.components.login.LoginPrompt
 import com.example.coollib.ui.previewSupport.MockLoans
@@ -60,6 +62,8 @@ fun LoanScreen(
     onLogin: () -> Unit,
     viewModel: LoanViewModel = hiltViewModel()
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.LOAN)
+
     val loans by viewModel.loans.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isLoggedIn by viewModel.isLoggedIn.collectAsState()

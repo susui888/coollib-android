@@ -10,4 +10,6 @@ object APIConfig {
     const val IMG_USER = "${IMG_SERVER}/userimg"
 
     const val IMG_REVIEW = "https://review.ryansu.uk"
+
+    const val TELEMETRY_URL = "https://status.ryansu.uk"
 }

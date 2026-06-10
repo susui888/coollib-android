@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.coollib.R
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 
 @Composable
 fun RegisterScreen(
@@ -42,6 +44,8 @@ fun RegisterScreen(
     onBackClick: () -> Unit = {},
     onLoginSuccess: (String, String) -> Unit = { _, _ -> },
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.REGISTER)
+
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }

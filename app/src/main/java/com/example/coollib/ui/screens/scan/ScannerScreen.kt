@@ -40,6 +40,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 
 @Composable
 fun ScannerScreen(
@@ -47,6 +49,8 @@ fun ScannerScreen(
     onNavigateToCart: () -> Unit,
     onBack: () -> Unit
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.SCANNER)
+
     val context = LocalContext.current
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 

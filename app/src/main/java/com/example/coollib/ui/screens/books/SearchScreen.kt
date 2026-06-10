@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 
 @Composable
 fun SearchScreen(
@@ -43,6 +45,8 @@ fun SearchScreen(
     onBack: () -> Unit,
     onSearch: (String) -> Unit
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.SEARCH)
+
     val history by viewModel.history.collectAsStateWithLifecycle()
 
     SearchScreenContent(

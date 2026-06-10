@@ -52,7 +52,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Cart
+import com.example.coollib.domain.model.TelemetryEvents
 import com.example.coollib.domain.model.Wishlist
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.book.BookRow
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.previewSupport.MockCart
@@ -69,6 +71,7 @@ fun CartScreen(
     onLogin: () -> Unit = {},
     onBookClick: (Int) -> Unit
 ){
+    TrackScreenView(screenName = TelemetryEvents.Screens.CART)
 
     val cartItems by cartViewModel.cartItems.collectAsStateWithLifecycle()
     val wishlist by wishlistViewModel.wishlist.collectAsStateWithLifecycle()

@@ -30,6 +30,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.R
 import com.example.coollib.domain.model.Category
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.book.BookCoverImage
 import com.example.coollib.ui.mapper.toUiModel
 import com.example.coollib.ui.model.BookItemUiModel
@@ -47,6 +49,8 @@ fun HomeScreen(
     onCategoryClick: (Int) -> Unit,
     onBookClick: (Int) -> Unit
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.HOME)
+
     val category by homeViewModel.category.collectAsStateWithLifecycle()
     val lastViewBooks by homeViewModel.lastViewBooks.collectAsStateWithLifecycle()
     val wishlist by wishlistViewModel.wishlist.collectAsStateWithLifecycle()

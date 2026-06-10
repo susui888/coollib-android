@@ -10,7 +10,11 @@ import com.example.coollib.data.remote.InstantAdapter
 import com.example.coollib.data.remote.LoanApi
 import com.example.coollib.data.remote.LocalDateAdapter
 import com.example.coollib.data.remote.ReviewApi
+import com.example.coollib.data.remote.TelemetryApi
+import com.example.coollib.data.remote.TelemetryInterceptor
 import com.example.coollib.data.remote.UserApi
+import com.example.coollib.data.repository.TelemetryRepositoryImpl
+import com.example.coollib.domain.repository.TelemetryRepository
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -22,7 +26,9 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
+import okhttp3.logging.HttpLoggingInterceptor
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -46,12 +52,29 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideTelemetryInterceptor(): TelemetryInterceptor {
+        return TelemetryInterceptor()
+    }
+
+    @Provides
+    @Singleton
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        telemetryInterceptor: TelemetryInterceptor
     ): OkHttpClient {
-        return OkHttpClient.Builder()
+
+        val builder = OkHttpClient.Builder()
+            .addInterceptor(telemetryInterceptor)
             .addInterceptor(authInterceptor)
-            .build()
+
+        if (com.example.coollib.BuildConfig.DEBUG) {
+            val loggingInterceptor = HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }
+            builder.addInterceptor(loggingInterceptor)
+        }
+
+        return builder.build()
     }
 
     @Provides
@@ -64,55 +87,88 @@ object NetworkModule {
             .build()
     }
 
+    // =================================================================
+    // 🛠️ Retrofit Instance Routing Configurations
+    // =================================================================
+
+    /**
+     * 1. Core Business Retrofit Instance
+     */
     @Provides
     @Singleton
-    fun provideRetrofit(
+    @Named("BusinessRetrofit")
+    fun provideBusinessRetrofit(
         okHttpClient: OkHttpClient,
         moshi: Moshi
     ): Retrofit {
-
         return Retrofit.Builder()
             .baseUrl("${APIConfig.SERVER}/api/")
             .client(okHttpClient)
             .addConverterFactory(ScalarsConverterFactory.create())
-            .addConverterFactory(
-                MoshiConverterFactory.create(moshi).asLenient()
-            )
+            .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
             .build()
     }
 
+    /**
+     * 2. Telemetry-Specific Retrofit Instance (Points to independent teleMetryURL)
+     */
     @Provides
-    fun provideBookApi(
-        retrofit: Retrofit
-    ): BookApi {
-        return retrofit.create(BookApi::class.java)
+    @Singleton
+    @Named("TelemetryRetrofit")
+    fun provideTelemetryRetrofit(
+        okHttpClient: OkHttpClient,
+        moshi: Moshi
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("${APIConfig.TELEMETRY_URL}/api/")
+            .client(okHttpClient)
+            .addConverterFactory(ScalarsConverterFactory.create())
+            .addConverterFactory(MoshiConverterFactory.create(moshi).asLenient())
+            .build()
+    }
+
+    // =================================================================
+    // Telemetry API Instantiation (Bound to TelemetryRetrofit)
+    // =================================================================
+
+    @Provides
+    @Singleton
+    fun provideTelemetryApi(
+        @Named("TelemetryRetrofit") retrofit: Retrofit
+    ): TelemetryApi {
+        return retrofit.create(TelemetryApi::class.java)
     }
 
     @Provides
-    fun provideUserApi(
-        retrofit: Retrofit
-    ): UserApi {
-        return retrofit.create(UserApi::class.java)
+    @Singleton
+    fun provideTelemetryRepository(
+        telemetryApi: TelemetryApi
+    ): TelemetryRepository {
+        return TelemetryRepositoryImpl(telemetryApi)
     }
 
-    @Provides
-    fun provideCartApi(
-        retrofit: Retrofit
-    ): CartApi {
-        return retrofit.create(CartApi::class.java)
-    }
+
+    // =================================================================
+    // Core Business API Instantiation (Explicitly bound to BusinessRetrofit)
+    // =================================================================
 
     @Provides
-    fun provideLoanApi(
-        retrofit: Retrofit
-    ): LoanApi {
-        return retrofit.create(LoanApi::class.java)
-    }
+    fun provideBookApi(@Named("BusinessRetrofit") retrofit: Retrofit): BookApi =
+        retrofit.create(BookApi::class.java)
 
     @Provides
-    fun provideReviewApi(
-        retrofit: Retrofit
-    ): ReviewApi {
-        return retrofit.create(ReviewApi::class.java)
-    }
+    fun provideUserApi(@Named("BusinessRetrofit") retrofit: Retrofit): UserApi =
+        retrofit.create(UserApi::class.java)
+
+    @Provides
+    fun provideCartApi(@Named("BusinessRetrofit") retrofit: Retrofit): CartApi =
+        retrofit.create(CartApi::class.java)
+
+    @Provides
+    fun provideLoanApi(@Named("BusinessRetrofit") retrofit: Retrofit): LoanApi =
+        retrofit.create(LoanApi::class.java)
+
+    @Provides
+    fun provideReviewApi(@Named("BusinessRetrofit") retrofit: Retrofit): ReviewApi =
+        retrofit.create(ReviewApi::class.java)
 }

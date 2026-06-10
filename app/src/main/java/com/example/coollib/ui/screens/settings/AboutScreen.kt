@@ -18,6 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.coollib.R
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,6 +27,8 @@ fun AboutScreen(
     onNavigateBack: () -> Unit,
     onUrlClick: (String) -> Unit
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.ABOUT)
+
     Scaffold(
         topBar = {
             TopAppBar(

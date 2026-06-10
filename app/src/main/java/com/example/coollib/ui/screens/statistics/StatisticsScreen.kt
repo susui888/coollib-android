@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.login.LoginPrompt
 import com.example.coollib.ui.theme.CoolLibTheme
 
@@ -38,6 +40,8 @@ fun StatisticsScreen(
     onLogin: () -> Unit = {},
     viewModel: StatisticsViewModel = hiltViewModel()
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.STATICS)
+
     val state by viewModel.state.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {

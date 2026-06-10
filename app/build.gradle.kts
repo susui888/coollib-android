@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.moshi.kotlin)
     implementation(libs.converter.scalars)
+    implementation(libs.okhttp.logging)
 
     // Room
     implementation(libs.androidx.room.ktx)

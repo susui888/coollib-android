@@ -32,6 +32,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.coollib.R
 import com.example.coollib.domain.model.Review
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.book.BookCoverImage
 import com.example.coollib.ui.components.login.LoginPrompt
 import com.example.coollib.ui.previewSupport.MockReviews
@@ -45,6 +47,8 @@ fun ReviewScreen(
     onLogin: () -> Unit,
     viewModel: ReviewViewModel = hiltViewModel()
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.REVIEW)
+
     val reviews by viewModel.reviews.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val isLoggedIn = viewModel.isLoggedIn

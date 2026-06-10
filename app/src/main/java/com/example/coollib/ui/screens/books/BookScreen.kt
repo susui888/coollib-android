@@ -35,6 +35,8 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.coollib.domain.model.Book
 import com.example.coollib.domain.model.SearchQuery
+import com.example.coollib.domain.model.TelemetryEvents
+import com.example.coollib.ui.components.TrackScreenView
 import com.example.coollib.ui.components.book.BookCard
 import com.example.coollib.ui.components.book.BookRow
 import com.example.coollib.ui.mapper.toUiModel
@@ -48,6 +50,8 @@ fun BookScreen(
     query: SearchQuery,
     onBookClick: (Int) -> Unit
 ) {
+    TrackScreenView(screenName = TelemetryEvents.Screens.BOOK)
+
     LaunchedEffect(Unit) {
         viewModel.searchBooks(query)
     }
