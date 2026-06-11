@@ -59,7 +59,17 @@ class BookViewModel @Inject constructor(
     fun selectBook(id: Int) =
         viewModelScope.launch {
             try {
-                _selectedBook.value = bookUseCase.getBookById(id)
+                val book = bookUseCase.getBookById(id)
+                _selectedBook.value = book
+
+                telemetryManager.trackAction(
+                    actionName = "SCREEN_VIEW_BOOK_DETAIL",
+                    bookId = id,
+                    extra = mapOf(
+                        "book_title" to (book?.title ?: "Unknown Book")
+                    )
+                )
+
                 loadReviews(id)
             } catch (e: Exception) {
                 _selectedBook.value = null

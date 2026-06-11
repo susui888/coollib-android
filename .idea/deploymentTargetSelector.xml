@@ -24,9 +24,6 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="ReviewListScreenPreview">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="ReviewScreenTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>

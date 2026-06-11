@@ -28,7 +28,7 @@ object TelemetryEvents {
 
         const val BOOK_SEARCH = "BOOK_SEARCH"
         const val BOOK_POST_REVIEW_SUCCESS = "BOOK_POST_REVIEW_SUCCESS"
-
+        const val BOOK_DELETE_REVIEW_SUCCESS = "BOOK_DELETE_REVIEW_SUCCESS"
 
         const val HOME_DATA_LOAD_SUCCESS = "HOME_DATA_LOAD_SUCCESS"
         const val HOME_DATA_LOAD_FAILURE = "HOME_DATA_LOAD_FAILURE"   // 首页/通用加载失败

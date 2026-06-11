@@ -61,7 +61,7 @@ class CartViewModel @Inject constructor(
         viewModelScope.launch {
             cartUseCase.removeFromCart(bookId)
 
-            telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_ADD_CART, bookId = bookId)
+            telemetryManager.trackAction(TelemetryEvents.Actions.BOOK_REMOVE_CART, bookId = bookId)
         }
     }
 

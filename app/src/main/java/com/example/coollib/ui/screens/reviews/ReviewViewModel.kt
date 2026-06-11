@@ -47,7 +47,7 @@ class ReviewViewModel @Inject constructor(
                 reviewUseCase.deleteReview(review)
             }.onSuccess {
                 telemetryManager.trackAction(
-                    actionName = "BOOK_DELETE_REVIEW_SUCCESS",
+                    actionName = TelemetryEvents.Actions.BOOK_DELETE_REVIEW_SUCCESS,
                     bookId = review.bookId,
                     extra = mapOf("review_id" to (review.id?.toString() ?: "local"))
                 )
