@@ -1,18 +1,6 @@
-# CoolLib Android Client &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![Android UI Demo](https://img.shields.io/badge/Android-UI_Demo-3DDC84?style=flat&logo=android&logoColor=white)](https://ryansu.uk/android-demo/)&nbsp;&nbsp;&nbsp;&nbsp;[![Android CI/CD](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml/badge.svg)](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml)
+# CoolLib Android Client 
 
-<p>
-  <img src="https://img.shields.io/badge/Kotlin-2.x-7F52FF"/>&nbsp;
-  <img src="https://img.shields.io/badge/Jetpack_Compose-UI-3DDC84"/>&nbsp;
-  <img src="https://img.shields.io/badge/Material_3-Design-6750A4"/>&nbsp;
-  <img src="https://img.shields.io/badge/Architecture-Clean_Architecture-4B5563?labelColor=111827"/>
-</p>
-
-<p>
-  <img src="https://img.shields.io/badge/Room-Local_DB-4F5B66"/>&nbsp;
-  <img src="https://img.shields.io/badge/Retrofit-Networking-048A81"/>&nbsp;
-  <img src="https://img.shields.io/badge/Hilt-DI-7FADF2"/>&nbsp;
-  <img src="https://img.shields.io/badge/CameraX-Barcode_Scan-orange"/>&nbsp;
-</p>
+[![Android UI Demo](https://img.shields.io/badge/Android-UI_Demo-3DDC84?style=flat&logo=android&logoColor=white)](https://ryansu.uk/demo/android-demo/)&nbsp;&nbsp;&nbsp;&nbsp;[![Android CI/CD](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml/badge.svg)](https://github.com/susui888/coollib-android/actions/workflows/android-ci.yml)
 
 Android client for the CoolLib ecosystem. Built with Jetpack Compose and Clean Architecture, designed for offline-first library management with synchronized backend integration.
 
