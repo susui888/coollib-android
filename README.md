@@ -48,16 +48,71 @@ Android client for the CoolLib ecosystem. Built with Jetpack Compose and Clean A
 
 ```mermaid
 flowchart LR
-    UI(Compose UI) --> VM(ViewModel)
-    VM --> UseCase(Use Cases)
-    UseCase --> Repo(Repository)
-    Repo --> Local[(Room DB)]
-    Repo --> Remote(Retrofit API)
 
-    style UI fill:#22c55e,stroke:#16a34a,stroke-width:2px,color:#fff
-    style VM fill:#475569,stroke:#334155,stroke-width:2px,color:#fff
-    style UseCase fill:#475569,stroke:#334155,stroke-width:2px,color:#fff
-    style Repo fill:#475569,stroke:#334155,stroke-width:2px,color:#fff
-    style Local fill:#bfdbfe,stroke:#60a5fa,stroke-width:1px,color:#1f2937
-    style Remote fill:#3b82f6,stroke:#2563eb,stroke-width:2px,color:#fff
-    linkStyle default stroke:#94a3b8,stroke-width:1.5px
+                subgraph DI ["`**Hilt Dependency Injection**`"]
+                Hilt{{Hilt\nContainer}}
+                end
+
+                subgraph Data ["`**Data Layer**`"]
+                direction TB
+                Room[(Room\nDatabase)]
+                DAO(Data Access\nObjects)
+                Impl(RepositoryImpl)
+                end
+
+                subgraph Domain ["`**Domain Layer**`"]
+                direction TB
+                RepoI(interface\nRepository)
+                UC(UseCases \n Interactors)
+                end
+
+                subgraph Presentation ["`**UI Layer**`"]
+                direction TB
+                VM(ViewModel)
+                UIState([UiState])
+                Compose(Jetpack\nCompose)
+                end
+
+                Room <--> DAO
+                Impl --> DAO
+
+                Impl -.->|Implements| RepoI
+
+                UC --> RepoI
+                VM --> UC
+
+                VM -- "Exposes" --> UIState
+                UIState -- "Renders" --> Compose
+                Compose -- "User Action" --> VM
+
+                Hilt e1@-.->|Inject| DAO
+                Hilt e4@-.->|Binds| Impl
+                Hilt e2@-.->|Inject| UC
+                Hilt e3@-.->|Inject| VM
+
+                e1@{ animate: true }
+                e2@{ animate: true }
+                e3@{ animate: true }
+                e4@{ animate: true }
+
+                %% =========================
+                %% STYLE SYSTEM (Light Theme)
+                %% =========================
+                style Hilt fill:#0284c7,stroke:#0369a1,stroke-width:2px,color:#ffffff
+                style Room fill:#334155,stroke:#1e293b,stroke-width:2px,color:#ffffff
+                style DAO fill:#475569,stroke:#334155,stroke-width:2px,color:#ffffff
+                style Impl fill:#64748b,stroke:#475569,stroke-width:2px,color:#ffffff
+
+                style RepoI fill:#0d9488,stroke:#0f766e,stroke-width:2px,color:#ffffff
+                style UC fill:#14b8a6,stroke:#0d9488,stroke-width:2px,color:#ffffff
+
+                style VM fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#ffffff
+                style UIState fill:#bbf7d0,stroke:#16a34a,stroke-width:2px,color:#14532d
+                style Compose fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#166534
+
+                style DI fill:none,stroke:#0284c7,stroke-dasharray: 5 5
+                style Data fill:none,stroke:#475569,stroke-dasharray: 5 5
+                style Domain fill:none,stroke:#0d9488,stroke-dasharray: 5 5
+                style Presentation fill:none,stroke:#16a34a,stroke-dasharray: 5 5
+
+                linkStyle default stroke:#64748b,stroke-width:1.5px
