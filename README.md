@@ -44,7 +44,7 @@ Android client for the CoolLib ecosystem. Built with Jetpack Compose and Clean A
 * Modular architecture aligned with server-side Clean Architecture design
 * Efficient DTO-based synchronization with backend services
 
-## Architecture Overview
+## Data Flow Architecture
 
 ```mermaid
 flowchart LR
