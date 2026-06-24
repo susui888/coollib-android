@@ -4,13 +4,13 @@
 
 Android client for the CoolLib ecosystem. Built with Jetpack Compose and Clean Architecture, designed for offline-first library management with synchronized backend integration.
 
-## Android Metrics
-<p><a href="https://ryansu.uk/analytics/mobile/"><img src="https://telemetry-svg.susui888.workers.dev/api/telemetry-android.svg" alt="Android Metrics" width="600" /></a></p>
-
 ## Ecosystem
 
 * [CoolLib Server](https://github.com/susui888/CoolLeaf) — Spring Boot backend API
 * [CoolLib iOS](https://github.com/susui888/coollib-ios) — SwiftUI client
+
+## Android Metrics
+<p><a href="https://ryansu.uk/analytics/mobile/"><img src="https://telemetry-svg.susui888.workers.dev/api/telemetry-android.svg" alt="Android Metrics" width="600" /></a></p>
 
 ## Tech Stack
 
